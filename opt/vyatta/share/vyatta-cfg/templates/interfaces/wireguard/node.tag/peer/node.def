@@ -8,6 +8,6 @@ syntax:expression: pattern $VAR(@) "^[0-9a-zA-Z\+/=]+$" ;
 	"Key is not valid Base64"
 
 create:
-	sudo wg set $VAR(../@) peer $VAR(@)
+	sudo wg set $VAR(../@) peer "$VAR(@)"
 delete:
-	sudo wg set $VAR(../@) peer $VAR(@) remove
+	sudo wg set $VAR(../@) peer "$VAR(@)" remove
