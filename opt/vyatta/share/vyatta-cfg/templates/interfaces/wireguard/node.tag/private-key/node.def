@@ -4,8 +4,8 @@ syntax:expression: exec "/opt/vyatta/sbin/check_file_in_config_dir $VAR(@) '/con
 val_help: File in /config/auth
 
 create:
-	sudo wg set $VAR(../@) public-key $VAR(@)
+	sudo wg set $VAR(../@) private-key $VAR(@)
 delete:
-	sudo wg set $VAR(../@) public-key /dev/null
+	sudo wg set $VAR(../@) private-key /dev/null
 update:
-	sudo wg set $VAR(../@) public-key $VAR(@)
+	sudo wg set $VAR(../@) private-key $VAR(@)
