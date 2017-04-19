@@ -1,0 +1,6 @@
+multi:
+type: txt
+help: Allow connections from these IP addresses
+
+create:
+	echo $VAR(@)
