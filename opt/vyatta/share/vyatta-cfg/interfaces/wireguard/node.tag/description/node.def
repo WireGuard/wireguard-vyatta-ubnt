@@ -1,0 +1,8 @@
+type: txt
+help: Description
+
+syntax:expression: pattern $VAR(@) "^.{1,256}$" \
+	; "interface description is too long (limit 256 characters)"
+
+update: sudo sh -c "echo \"$VAR(@)\" >/sys/class/net/$VAR(../@)/ifalias"
+delete: sudo sh -c "echo '' >/sys/class/net/$VAR(../@)/ifalias"
