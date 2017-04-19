@@ -1,0 +1,11 @@
+help: Remote endpoint
+
+commit:expression: $VAR(./address) != "" ;
+	"Must configure the endpoint address for $VAR(../@)"
+commit:expression: $VAR(./port) != "" ;
+	"Must configure the endpoint port for $VAR(../@)"
+
+create:
+	sudo wg set $VAR(../../@) peer $VAR(../@) endpoint "$VAR(./address):$VAR(./port)"
+update:
+	sudo wg set $VAR(../../@) peer $VAR(../@) endpoint "$VAR(./address):$VAR(./port)"

@@ -1,0 +1,4 @@
+type: u32
+help: Remote port number
+syntax:expression: $VAR(@) > 1024 && $VAR(@) < 65536;
+                   "Port must be between 1024 and 65535"
