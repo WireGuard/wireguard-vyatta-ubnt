@@ -12,7 +12,7 @@ syntax:expression: pattern $VAR(@) "^wg[0-9]+$" ;
 	"Interface name must be (wg0 - wg99)"
 commit:expression: $VAR(./address) != "" ;
 	"Must configure the address for $VAR(@)"
-commit:expression: $VAR(./local-port) != "" ;
+commit:expression: $VAR(./listen-port) != "" ;
 	"Must configure local port for $VAR(@)"
 commit:expression: $VAR(./private-key) != "" ;
 	"Private key must be specified for $VAR(@)"
