@@ -10,7 +10,5 @@ delete:
 	sudo ip link del dev $VAR(@)
 syntax:expression: pattern $VAR(@) "^[0-9a-z]+{1,15}$" ;
 	"Interface name must be alphanumeric of length 1-15"
-commit:expression: $VAR(./listen-port) != "" ;
-	"Must configure local port for $VAR(@)"
 commit:expression: $VAR(./private-key) != "" ;
 	"Private key must be specified for $VAR(@)"
