@@ -1,6 +1,14 @@
-multi:
 type: txt
 help: Allow connections from these IP addresses
 
 create:
-	echo $VAR(@)
+	sudo wg set $VAR(../../@) peer $VAR(../@) allowed-ips "$VAR(@)"
+
+	for IP_NET in $(echo $VAR(@) | tr "," "\n")
+	do
+		ip route add $IP_NET dev $VAR(../../@)
+	done
+delete:
+	sudo wg set $VAR(../../@) peer $VAR(../@) allowed-ips ""
+update:
+	sudo wg set $VAR(../../@) peer $VAR(../@) allowed-ips "$VAR(@)"
