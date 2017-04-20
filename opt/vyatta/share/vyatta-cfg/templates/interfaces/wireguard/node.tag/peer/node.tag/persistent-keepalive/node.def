@@ -1,5 +1,5 @@
 type: u32
-help: How often to send keep-alive packets
+help: Only useful when trying to maintain a connection from behind NAT, how often to send persistent keepalive packets
 
 syntax:expression: $VAR(@) > 0 && $VAR(@) < 65536;
                    "Value must be between 1 and 65535 seconds"
