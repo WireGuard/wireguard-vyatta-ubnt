@@ -4,7 +4,7 @@ val_help: File in /config/auth or 44-character (32-bytes) base64
 
 create:
 	if [[ $(/opt/vyatta/sbin/check_curve25519_or_file_in_configauth_dir $VAR(@)) == "inline" ]]; then
-		sudo bash -c 'wg set $VAR(../@) preshared-key <(echo "$VAR(@)")'
+		echo "$VAR(@)" | sudo wg set $VAR(../@) preshared-key /dev/stdin
 	else
 		sudo wg set $VAR(../@) preshared-key $VAR(@)
 	fi
@@ -12,7 +12,7 @@ delete:
 	sudo wg set $VAR(../@) preshared-key /dev/null
 update:
 	if [[ $(/opt/vyatta/sbin/check_curve25519_or_file_in_configauth_dir $VAR(@)) == "inline" ]]; then
-		sudo bash -c 'wg set $VAR(../@) preshared-key <(echo "$VAR(@)")'
+		echo "$VAR(@)" | sudo wg set $VAR(../@) preshared-key /dev/stdin
 	else
 		sudo wg set $VAR(../@) preshared-key $VAR(@)
 	fi
