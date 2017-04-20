@@ -1,9 +1,0 @@
-#!/bin/bash
-
-VAL=$1
-
-if [[ "$VAL" =~ ^[0-9a-zA-Z\+/]{43}=$ ]]; then
-	echo "inline"
-else
-	echo "file"
-fi
