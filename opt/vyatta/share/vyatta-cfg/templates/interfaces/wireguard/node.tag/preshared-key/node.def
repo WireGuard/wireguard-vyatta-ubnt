@@ -6,7 +6,7 @@ create:
 	if [[ $(/opt/vyatta/sbin/check_curve25519_or_file_in_configauth_dir $VAR(@)) == "inline" ]]; then
 		sudo bash -c 'wg set $VAR(../@) preshared-key <(echo "$VAR(@)")'
 	else
-		sudo bash -c 'wg set $VAR(../@) preshared-key $VAR(@)'
+		sudo wg set $VAR(../@) preshared-key $VAR(@)
 	fi
 delete:
 	sudo wg set $VAR(../@) preshared-key /dev/null
@@ -14,5 +14,5 @@ update:
 	if [[ $(/opt/vyatta/sbin/check_curve25519_or_file_in_configauth_dir $VAR(@)) == "inline" ]]; then
 		sudo bash -c 'wg set $VAR(../@) preshared-key <(echo "$VAR(@)")'
 	else
-		sudo bash -c 'wg set $VAR(../@) preshared-key $VAR(@)'
+		sudo wg set $VAR(../@) preshared-key $VAR(@)
 	fi
