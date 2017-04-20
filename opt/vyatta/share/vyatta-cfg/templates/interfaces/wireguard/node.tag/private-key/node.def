@@ -5,7 +5,5 @@ val_help: File in /config/auth
 
 create:
 	sudo wg set $VAR(../@) private-key $VAR(@)
-delete:
-	sudo wg set $VAR(../@) private-key /dev/null
 update:
 	sudo wg set $VAR(../@) private-key $VAR(@)
