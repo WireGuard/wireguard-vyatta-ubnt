@@ -4,8 +4,8 @@ help: Peer public key
 
 val_help: Base64 encoded public key
 
-syntax:expression: pattern $VAR(@) "^[0-9a-zA-Z\+/=]+$" ;
-	"Key is not valid Base64"
+syntax:expression: pattern $VAR(@) "^[0-9a-zA-Z\+/]{43}=$" ;
+	"Key is not valid 44-character (32-bytes) base64"
 
 create:
 	sudo wg set $VAR(../@) peer "$VAR(@)"
