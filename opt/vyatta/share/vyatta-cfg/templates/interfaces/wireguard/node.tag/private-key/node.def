@@ -6,11 +6,11 @@ create:
 	if [[ $(/opt/vyatta/sbin/check_curve25519_or_file_in_configauth_dir $VAR(@)) == "inline" ]]; then
 		sudo bash -c 'wg set $VAR(../@) private-key <(echo "$VAR(@)")'
 	else
-		sudo bash -c 'wg set $VAR(../@) private-key $VAR(@)'
+		sudo wg set $VAR(../@) private-key $VAR(@)
 	fi
 update:
 	if [[ $(/opt/vyatta/sbin/check_curve25519_or_file_in_configauth_dir $VAR(@)) == "inline" ]]; then
 		sudo bash -c 'wg set $VAR(../@) private-key <(echo "$VAR(@)")'
 	else
-		sudo bash -c 'wg set $VAR(../@) private-key $VAR(@)'
+		sudo wg set $VAR(../@) private-key $VAR(@)
 	fi
