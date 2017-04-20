@@ -1,0 +1,12 @@
+type: u32
+help: How often to send keep-alive packets
+
+syntax:expression: $VAR(@) > 0 && $VAR(@) < 65536;
+                   "Value must be between 1 and 65535 seconds"
+
+create:
+	sudo wg set $VAR(../../@) peer $VAR(../@) persistent-keepalive $VAR(@)
+delete:
+	sudo wg set $VAR(../../@) peer $VAR(../@) persistent-keepalive 0
+update:
+	sudo wg set $VAR(../../@) peer $VAR(../@) persistent-keepalive $VAR(@)
