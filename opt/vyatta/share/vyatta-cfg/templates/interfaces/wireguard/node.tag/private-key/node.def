@@ -3,14 +3,6 @@ help: Private key
 val_help: File in /config/auth or 44-character (32-bytes) base64
 
 create:
-	if [[ $(/opt/vyatta/sbin/check_curve25519_or_file_in_configauth_dir $VAR(@)) == "inline" ]]; then
-		echo "$VAR(@)" | sudo wg set $VAR(../@) private-key /dev/stdin
-	else
-		sudo wg set $VAR(../@) private-key $VAR(@)
-	fi
+	echo "$VAR(@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then wg set $VAR(../@) private-key <(echo "$key"); else wg set $VAR(../@) private-key "$key"; fi'
 update:
-	if [[ $(/opt/vyatta/sbin/check_curve25519_or_file_in_configauth_dir $VAR(@)) == "inline" ]]; then
-		echo "$VAR(@)" | sudo wg set $VAR(../@) private-key /dev/stdin
-	else
-		sudo wg set $VAR(../@) private-key $VAR(@)
-	fi
+	echo "$VAR(@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then wg set $VAR(../@) private-key <(echo "$key"); else wg set $VAR(../@) private-key "$key"; fi'
