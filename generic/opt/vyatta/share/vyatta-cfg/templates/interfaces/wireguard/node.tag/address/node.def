@@ -3,9 +3,9 @@ help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
-create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../@) $VAR(@)
+create: sudo ip addr add $VAR(@) dev $VAR(../@)
 
-delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../@) $VAR(@)
+delete: sudo ip addr del $VAR(@) dev $VAR(../@)
 
 val_help: ipv4net; IP address and prefix length
 val_help: ipv6net; IPv6 address and prefix length
