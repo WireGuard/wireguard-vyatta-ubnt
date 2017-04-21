@@ -4,10 +4,15 @@ help: WireGuard instance interface name
 
 val_help: wgX; WireGuard interface name
 
-create:
-	sudo ip link add dev $VAR(@) type wireguard
-delete:
-	sudo ip link del dev $VAR(@)
+create: sudo ip link add dev $VAR(@) type wireguard
+delete: sudo ip link del dev $VAR(@)
+end: if [ "$COMMIT_ACTION" != DELETE ]; then
+	sudo ip link set down dev $VAR(@)
+	sudo ip link set up dev $VAR(@)
+	for i in $(sudo wg show $VAR(@) allowed-ips | sed 's/^.*\t//;s/ /\n/g' | sort -nr -k 2 -t /); do
+		[[ $(sudo ip route get "$i" 2>/dev/null) == *dev\ $VAR(@)\ * ]] || sudo ip route add "$i" dev $VAR(@)
+	done
+     fi
 syntax:expression: pattern $VAR(@) "^[0-9a-z]+{1,15}$" ;
 	"Interface name must be alphanumeric of length 1-15"
 commit:expression: $VAR(./private-key) != "" ;
