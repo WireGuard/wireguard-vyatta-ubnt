@@ -1,6 +1,6 @@
 # vyatta-wireguard
 
-This is a vyatta module and pre-built binaries for the Ubiquiti EdgeRouter
+This is a Vyatta module and pre-built binaries for the Ubiquiti EdgeRouter
 to support [WireGuard](https://www.wireguard.io/).
 
 ### Installation
@@ -37,3 +37,7 @@ interfaces {
     }
 }
 ```
+
+### Binaries
+
+This repository ships prebuilt binaries, made from the [WireGuard source code](https://git.zx2c4.com/WireGuard/tree/src/). If you're buliding from scratch, please be sure to use `-mabi=64` in your `CFLAGS` for compiling the userspace tools; otherwise there will be strange runtime errors. The binaries in this repository are statically linked against [musl libc](https://www.musl-libc.org/) to mitigate potential issues with Ubiquiti's outdated libc.
