@@ -1,0 +1,14 @@
+type: u32
+help: Maximum Transmission Unit (MTU)
+syntax:expression: $VAR(@) >= 64 && $VAR(@) <= 8024; "Must be between 64-8024"
+val_help: u32:64-8024; Maximum Transmission Unit (MTU)
+
+syntax:expression: exec " \
+       mtu=`/usr/sbin/ubnt-hal getMtu`; \
+       if [ $VAR(@) -gt $mtu ]; then \
+           echo The max allowed MTU on this platform is $mtu; \
+           exit 1; \
+       fi"
+
+update: ip link set $VAR(../@) mtu $VAR(@)
+delete: ip link set $VAR(../@) mtu 1420
