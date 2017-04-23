@@ -1,0 +1,14 @@
+type: txt
+help: Inbound IPv6 firewall ruleset name for interface
+allowed: local -a params
+	eval "params=($(cli-shell-api listActiveNodes firewall ipv6-name))"
+	echo -n "${params[@]}"
+
+update:	ifname=$VAR(../../../@)
+        /usr/sbin/ubnt-fw update-interface \
+		update $ifname in $VAR(@) ipv6-name
+
+
+delete:	ifname=$VAR(../../../@)
+	/usr/sbin/ubnt-fw update-interface \
+		delete $ifname in $VAR(@) ipv6-name

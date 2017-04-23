@@ -1,0 +1,14 @@
+type: txt
+help: Outbound IPv4 modify ruleset name for interface
+allowed: local -a params
+	eval "params=($(cli-shell-api listActiveNodes firewall modify))"
+	echo -n "${params[@]}"
+
+update:	ifname=$VAR(../../../@)
+        /usr/sbin/ubnt-fw update-interface \
+		update $ifname out $VAR(@) modify
+
+
+delete:	ifname=$VAR(../../../@)
+	/usr/sbin/ubnt-fw update-interface \
+		delete $ifname out $VAR(@) modify
