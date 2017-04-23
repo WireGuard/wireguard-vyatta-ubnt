@@ -1,0 +1,14 @@
+type: txt
+help: Local IPv4 firewall ruleset name for interface
+allowed: local -a params
+	eval "params=($(cli-shell-api listActiveNodes firewall name))"
+	echo -n "${params[@]}"
+
+update:	ifname=$VAR(../../../@)
+        /usr/sbin/ubnt-fw update-interface \
+		update $ifname local $VAR(@) name
+
+
+delete:	ifname=$VAR(../../../@)
+	/usr/sbin/ubnt-fw update-interface \
+		delete $ifname local $VAR(@) name
