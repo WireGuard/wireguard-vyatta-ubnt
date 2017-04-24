@@ -1,4 +1,5 @@
 tag:
+priority: 459
 type: txt
 help: WireGuard instance interface name
 
