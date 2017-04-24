@@ -5,10 +5,10 @@ to support [WireGuard](https://www.wireguard.io/).
 
 ### Installation
 
-Download the latest `wireguard-octeon.deb` release (or build it yourself
+Download the [latest `wireguard-octeon-${RELEASE}.deb` release](https://github.com/Lochnair/vyatta-wireguard/releases) (or build it yourself
 here with `make`) and then install it via:
 
-    $ sudo dpkg -i ./wireguard-octeon.deb
+    $ sudo dpkg -i ./wireguard-octeon-${RELEASE}.deb
 
 After you'll be able to have a `wireguard` section in `interfaces`.
 
@@ -37,6 +37,8 @@ interfaces {
     }
 }
 ```
+
+If you prefer not to put private keys in the config file, the `private-key` and `preshared-key` items can alternatively take a file path on the filesystem, such as one in `/config/auth/`.
 
 ### Binaries
 
