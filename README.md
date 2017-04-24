@@ -43,3 +43,54 @@ If you prefer not to put private keys in the config file, the `private-key` and 
 ### Binaries
 
 This repository ships prebuilt binaries, made from the [WireGuard source code](https://git.zx2c4.com/WireGuard/tree/src/). If you're buliding from scratch, please be sure to use `-mabi=64` in your `CFLAGS` for compiling the userspace tools; otherwise there will be strange runtime errors. The binaries in this repository are statically linked against [musl libc](https://www.musl-libc.org/) to mitigate potential issues with Ubiquiti's outdated libc.
+
+#### Kernel Module
+
+```bash
+$ mkdir -p linux-src/linux-3.10
+$ cd linux-src/linux-3.10
+$ tar xf ../../source/kernel_*.tgz
+$ cd ../..
+$ tar xf source/cavm-executive_*.tgz
+$ export KERNELDIR="$PWD/linux-src/linux-3.10/kernel"
+$ cd OCTEON-SDK
+$ . ./env-setup OCTEON_CN50XX --no-runtime-model --verbose
+$ cd ..
+$ export CROSS_COMPILE=mips64-octeon-linux-gnu-
+$ export CC=mips64-octeon-linux-gnu-gcc
+$ export ARCH=mips
+$ make -C linux-src/linux-3.10/kernel -j$(nproc)
+$ git clone https://git.zx2c4.com/WireGuard
+$ make -C linux-src/linux-3.10/kernel M=$PWD/WireGuard/src modules -j$(nproc)
+$ ls -l WireGuard/src/wireguard.ko
+```
+
+#### Userspace Tools
+
+```bash
+$ cd OCTEON-SDK
+$ . ./env-setup OCTEON_CN50XX --no-runtime-model --verbose
+$ cd ..
+$ export CROSS_COMPILE=mips64-octeon-linux-gnu-
+$ export CC=mips64-octeon-linux-gnu-gcc
+$ export ARCH=mips
+$ mkdir -p prefix
+$ prefix="$PWD/prefix"
+$ git clone git://git.musl-libc.org/musl
+$ cd musl
+$ CFLAGS=-mabi=64 ./configure --prefix="$prefix" --disable-shared
+$ make -j$(nproc)
+$ make install
+$ cd ..
+$ make -C linux-src/linux-3.10/kernel headers_install INSTALL_HDR_PATH="$prefix"
+$ git clone git://git.netfilter.org/libmnl
+$ cd libmnl
+$ ./autogen.sh
+$ CC="$prefix/bin/musl-gcc" CFLAGS=-mabi=64 ./configure --prefix="$prefix" --disable-shared --enable-static --host=x86_64-pc-linux-gnu
+$ make -j$(nproc)
+$ make install
+$ cd ..
+$ git clone https://git.zx2c4.com/WireGuard
+$ CC="$prefix/bin/musl-gcc" make -C WireGuard/src/tools/ -j$(nproc)
+$ ls -l WireGuard/src/tools/wg
+```
