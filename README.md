@@ -5,10 +5,12 @@ to support [WireGuard](https://www.wireguard.io/).
 
 ### Installation
 
-Download the [latest `wireguard-octeon-${RELEASE}.deb` release](https://github.com/Lochnair/vyatta-wireguard/releases) (or build it yourself
+Download the [latest release](https://github.com/Lochnair/vyatta-wireguard/releases) for your model (or build it yourself
 here with `make`) and then install it via:
 
     $ sudo dpkg -i ./wireguard-octeon-${RELEASE}.deb
+    or
+    $ sudo dpkg -i ./wireguard-ralink-${RELEASE}.deb
 
 After you'll be able to have a `wireguard` section in `interfaces`.
 
