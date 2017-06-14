@@ -1,0 +1,8 @@
+type: bool
+
+help: Automatically add the allowed IPs for all peers to the routing table for this interface.
+
+default: true
+
+val_help: true; Enable automatically adding allowed IPs to the routing table.
+val_help: false; Disable automatically adding allowed IPs to the routing table.
