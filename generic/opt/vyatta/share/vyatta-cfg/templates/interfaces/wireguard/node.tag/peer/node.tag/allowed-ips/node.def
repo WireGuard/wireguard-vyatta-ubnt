@@ -1,9 +1,8 @@
+multi:
 type: txt
+priority: 460
 help: Allow connections from these IP addresses
 
-create:
-	sudo wg set $VAR(../../@) peer $VAR(../@) allowed-ips "$VAR(@)"
-delete:
-	sudo wg set $VAR(../../@) peer $VAR(../@) allowed-ips ""
-update:
-	sudo wg set $VAR(../../@) peer $VAR(../@) allowed-ips "$VAR(@)"
+end:
+	ALLOWED=`cli-shell-api returnValues interfaces wireguard $VAR(../../@) peer $VAR(../@) allowed-ips | tr ' ' ',' | tr -d "'"`
+	sudo wg set $VAR(../../@) peer $VAR(../@) allowed-ips "$ALLOWED"
