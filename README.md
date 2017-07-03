@@ -22,22 +22,22 @@ evenly here. Here's an example vyatta configuration:
 
 
 ```
-interfaces {
-    wireguard wg0 {
-        private-key "iO3YxEZM5KNmdST1XYtv1xQ8AM3y12+/K+QFKY7rflw="
-        address "192.168.33.1/24"
-        listen-port 51820
+configure
 
-        peer "aBaxDzgsyDk58eax6lt3CLedDt6SlVHnDxLG2K5UdV4=" {
-            allowed-ips "192.168.33.101/32"
-            endpoint "example1.example.net:51820"
-        }
-        peer "GIPWDet2eswjz1JphYFb51sh6I+CwvzOoVyD7z7kZVc=" {
-            allowed-ips "192.168.33.102/32,192.168.33.103/32"
-            endpoint "anotherexample.example.org:29922"
-        }
-    }
-}
+set interfaces wireguard wg0 address 192.168.33.1/24
+set interfaces wireguard wg0 listen-port 51820
+set interfaces wireguard wg0 route-allowed-ips true
+
+set interfaces wireguard wg0 peer GIPWDet2eswjz1JphYFb51sh6I+CwvzOoVyD7z7kZVc= endpoint example1.org:29922
+set interfaces wireguard wg0 peer GIPWDet2eswjz1JphYFb51sh6I+CwvzOoVyD7z7kZVc= allowed-ips 192.168.33.101/32
+
+set interfaces wireguard wg0 peer aBaxDzgsyDk58eax6lt3CLedDt6SlVHnDxLG2K5UdV4= endpoint example2.net:51820
+set interfaces wireguard wg0 peer aBaxDzgsyDk58eax6lt3CLedDt6SlVHnDxLG2K5UdV4= allowed-ips 192.168.33.102/32
+set interfaces wireguard wg0 peer aBaxDzgsyDk58eax6lt3CLedDt6SlVHnDxLG2K5UdV4= allowed-ips 192.168.33.103/32
+
+set interfaces wireguard wg0 private-key /config/auth/wg.key
+
+commit
 ```
 
 If you prefer not to put private keys in the config file, the `private-key` and `preshared-key` items can alternatively take a file path on the filesystem, such as one in `/config/auth/`.
