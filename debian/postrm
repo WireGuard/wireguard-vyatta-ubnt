@@ -1,0 +1,3 @@
+#!/bin/sh
+dpkg-divert --package wireguard  --rename --remove \
+            /opt/vyatta/share/perl5/Vyatta/Interface.pm

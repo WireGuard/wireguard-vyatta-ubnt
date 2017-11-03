@@ -1,0 +1,2 @@
+help: Show summary of specified WireGuard interface information
+run: ${vyatta_bindir}/vyatta-show-interfaces.pl --intf="$4" --action=show-brief

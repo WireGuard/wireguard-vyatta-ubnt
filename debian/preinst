@@ -1,0 +1,4 @@
+#!/bin/sh
+dpkg-divert --package wireguard --rename \
+            --divert /opt/vyatta/share/perl5/Vyatta/Interface.pm.vyatta \
+            --add /opt/vyatta/share/perl5/Vyatta/Interface.pm

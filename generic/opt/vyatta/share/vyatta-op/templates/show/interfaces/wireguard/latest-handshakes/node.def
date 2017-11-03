@@ -1,0 +1,2 @@
+help: Show wireguard interface latest-handshakes
+run: sudo wg show all latest-handshakes
