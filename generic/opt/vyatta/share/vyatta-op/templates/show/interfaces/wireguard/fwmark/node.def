@@ -1,0 +1,2 @@
+help: Show wireguard interface fwmark
+run: sudo wg show all fwmark

@@ -1,0 +1,2 @@
+help: Show wireguard interface information
+run: ${vyatta_bindir}/vyatta-show-interfaces.pl --intf-type=wireguard --action=show-brief

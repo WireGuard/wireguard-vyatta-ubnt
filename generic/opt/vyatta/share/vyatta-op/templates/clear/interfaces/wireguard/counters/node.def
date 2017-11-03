@@ -1,0 +1,2 @@
+help: Clear all wireguard interfaces counters
+run: sudo ${vyatta_bindir}/sudo-users/vyatta-show-interfaces.pl --action=clear --intf-type=wireguard

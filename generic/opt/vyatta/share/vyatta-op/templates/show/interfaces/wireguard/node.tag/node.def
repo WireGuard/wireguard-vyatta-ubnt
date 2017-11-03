@@ -1,0 +1,3 @@
+help: Show specified wireguard interface information
+allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show wireguard
+run: ${vyatta_bindir}/vyatta-show-interfaces.pl --intf="$4"

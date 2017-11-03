@@ -1,0 +1,2 @@
+help: Show wireguard interface peers
+run: sudo wg show all peers
