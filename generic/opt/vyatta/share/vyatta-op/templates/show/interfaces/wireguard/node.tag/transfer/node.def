@@ -1,0 +1,2 @@
+help: Show specified wireguard interface transfer statistics
+run: sudo wg show "$4" transfer

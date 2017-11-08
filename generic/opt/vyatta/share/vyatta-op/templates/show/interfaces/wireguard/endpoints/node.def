@@ -1,0 +1,2 @@
+help: Show wireguard interface endpoints
+run: sudo wg show all endpoints

@@ -1,0 +1,2 @@
+help: Show wireguard interface preshared keys
+run: sudo wg show all preshared-keys

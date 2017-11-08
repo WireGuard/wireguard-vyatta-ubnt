@@ -1,0 +1,2 @@
+help: Show wireguard interface private key
+run: sudo wg show all private-key
