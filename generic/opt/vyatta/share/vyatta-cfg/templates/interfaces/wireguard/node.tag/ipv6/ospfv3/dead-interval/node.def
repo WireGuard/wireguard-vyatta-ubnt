@@ -1,0 +1,10 @@
+type: u32
+help: Interval after which neighbor is declared dead
+default: 40
+syntax:expression: $VAR(@) >= 1 && $VAR(@) <= 65535; "Must be between 1-65535"
+val_help: u32:1-65535; Neighbor dead interval in seconds (default 40)
+
+update: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" \
+          -c "ipv6 ospf6 dead-interval $VAR(@)"
+delete: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" \
+          -c "ipv6 ospf6 dead-interval 40"

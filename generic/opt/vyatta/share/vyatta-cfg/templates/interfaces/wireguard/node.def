@@ -19,6 +19,10 @@ end: if [ "$COMMIT_ACTION" != DELETE ]; then
 			[[ $(sudo ip route get "$i" 2>/dev/null) == *dev\ $VAR(@)\ * ]] || sudo ip route add "$i" dev $VAR(@)
 		done
 	fi
+        sudo /usr/sbin/ubnt-interface.pl --main --if-name=$VAR(@) \
+                                                --if-path="interfaces wireguard" \
+                                                --template-path="interfaces wireguard var" \
+                                                --cfg-root-path="interfaces wireguard $VAR(@)"
      fi
 
 commit:expression: $VAR(./private-key) != "" ;

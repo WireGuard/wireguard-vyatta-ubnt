@@ -1,0 +1,10 @@
+help: MD5 parameters
+
+create: vtysh -c "configure terminal" \
+	-c "interface $VAR(../../../../@)" \
+	-c "no ip ospf authentication" \
+	-c "ip ospf authentication message-digest"
+
+delete: vtysh -c "configure terminal" \
+	-c "interface $VAR(../../../../@)" \
+        -c "no ip ospf authentication"

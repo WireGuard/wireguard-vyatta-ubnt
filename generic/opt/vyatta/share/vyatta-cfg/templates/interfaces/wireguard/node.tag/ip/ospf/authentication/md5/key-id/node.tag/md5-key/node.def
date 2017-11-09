@@ -1,0 +1,20 @@
+type: txt
+help: MD5 key
+syntax:expression: pattern $VAR(@) "^[^[:space:]]{1,16}$"; "MD5 key must be 16 characters or less"
+val_help: MD5 Key (16 characters or less)
+
+# If this node is created 
+create:
+	vtysh -c "configure terminal" -c "interface $VAR(../../../../../../@)" \
+             -c "ip ospf message-digest-key $VAR(../@) md5 $VAR(@)"
+
+# If the value of this node is changed
+update:
+	vtysh -c "configure terminal" -c "interface $VAR(../../../../../../@)" \
+             -c "no ip ospf message-digest-key $VAR(../@)" \
+             -c "ip ospf message-digest-key $VAR(../@) md5 $VAR(@)"
+
+# If this node is deleted
+delete:
+        vtysh -c "configure terminal" -c "interface $VAR(../../../../../../@)" \
+             -c "no ip ospf message-digest-key $VAR(../@)"

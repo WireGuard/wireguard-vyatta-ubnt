@@ -1,0 +1,3 @@
+help: Disable forming of adjacency
+create: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "ipv6 ospf6 passive"
+delete: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "no ipv6 ospf6 passive"

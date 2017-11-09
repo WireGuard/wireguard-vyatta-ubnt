@@ -1,0 +1,8 @@
+type: u32
+help: Instance-id
+default: 0
+syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 255; "Must be between 0-255"
+val_help: u32:0-255; Instance Id (default 0)
+
+update: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "ipv6 ospf6 instance-id $VAR(@)"
+delete: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "ipv6 ospf6 instance-id 0"
