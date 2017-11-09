@@ -1,0 +1,4 @@
+help: Disable Maximum Transmission Unit mismatch detection
+create:vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "ipv6 ospf6 mtu-ignore"
+delete:vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "no ipv6 ospf6 mtu-ignore"
+

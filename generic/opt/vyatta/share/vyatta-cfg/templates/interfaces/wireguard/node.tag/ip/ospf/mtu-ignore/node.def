@@ -1,0 +1,3 @@
+help: Disable Maximum Transmission Unit (MTU) mismatch detection
+create:vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "ip ospf mtu-ignore"
+delete:vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "no ip ospf mtu-ignore"

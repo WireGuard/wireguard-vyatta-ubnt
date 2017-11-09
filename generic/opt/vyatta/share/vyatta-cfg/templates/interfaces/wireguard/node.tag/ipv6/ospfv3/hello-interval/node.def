@@ -1,0 +1,10 @@
+type: u32
+help: Interval between hello packets
+default: 10
+syntax:expression: $VAR(@) >= 1 && $VAR(@) <= 65535; "Must be between 1-65535"
+val_help: u32:1-65535; Interval between OSPFv3 hello packets in seconds (default 10)
+
+update: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" \
+          -c "ipv6 ospf6 hello-interval $VAR(@)"
+delete: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" \
+          -c "ipv6 ospf6 hello-interval 10"

@@ -1,0 +1,17 @@
+type: txt
+help: Authentication password
+syntax:expression: pattern $VAR(@) "^[^[:space:]]{1,16}$" ; "MD5 key must be 16 characters or less"
+val_help: MD5 Key (16 characters or less)
+
+update:vtysh                                     \
+       -c "configure terminal" -c "interface $VAR(../../../../../@)"   \
+       -c "ip rip authentication mode md5"              \
+       -c "ip rip authentication key-chain $VAR(../../../../../@)-rip" \
+       -c "key chain $VAR(../../../../../@)-rip" -c "key $VAR(../@)"   \
+       -c "key-string $VAR(@)"
+
+delete:vtysh --noerror                              \
+       -c "configure terminal" -c "interface $VAR(../../../../../@)"      \
+       -c "no ip rip authentication mode md5"              \
+       -c "no ip rip authentication key-chain $VAR(../../../../../@)-rip" \
+       -c "no key chain $VAR(../../../../../@)-rip"

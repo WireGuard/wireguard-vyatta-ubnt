@@ -1,0 +1,13 @@
+type: txt
+help: Plain text password
+syntax:expression: pattern $VAR(@) "^[^[:space:]]{1,16}$" ; "Password must be 16 characters or less"
+commit:expression: $VAR(../md5/) == "" ; "md5 password already set"
+val_help: Password (16 characters or less)
+
+update: vtysh -c "configure terminal" -c "interface $VAR(../../../../@)" \
+	-c "ip rip authentication mode text" \
+	-c "ip rip authentication string $VAR(@)"
+
+delete: vtysh -c "configure terminal" -c "interface $VAR(../../../../@)" \
+	-c "no ip rip authentication mode" \
+	-c "no ip rip authentication string $VAR(@)"
