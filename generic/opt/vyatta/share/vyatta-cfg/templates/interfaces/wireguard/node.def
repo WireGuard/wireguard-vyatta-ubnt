@@ -1,12 +1,15 @@
 tag:
 priority: 459
 type: txt
-help: WireGuard instance interface name
-
-val_help: wgX; WireGuard interface name
+help: WireGuard interface name
+val_help: <wgN>; WireGuard interface name
+syntax:expression: pattern $VAR(@) "^wg[0-9]+$" \
+                   ; "wg must be (wg0-wg999)"
 
 create: sudo ip link add dev $VAR(@) type wireguard
+
 delete: sudo ip link del dev $VAR(@)
+
 end: if [ "$COMMIT_ACTION" != DELETE ]; then
 	sudo ip link set down dev $VAR(@)
 	sudo ip link set up dev $VAR(@)
@@ -17,7 +20,6 @@ end: if [ "$COMMIT_ACTION" != DELETE ]; then
 		done
 	fi
      fi
-syntax:expression: pattern $VAR(@) "^[0-9a-z]+{1,15}$" ;
-	"Interface name must be alphanumeric of length 1-15"
+
 commit:expression: $VAR(./private-key) != "" ;
 	"Private key must be specified for $VAR(@)"
