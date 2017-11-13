@@ -42,6 +42,10 @@ commit
 
 If you prefer not to put private keys in the config file, the `private-key` and `preshared-key` items can alternatively take a file path on the filesystem, such as one in `/config/auth/`.
 
+### Routing
+
+Currenty there is no integration between the routing daemon and WireGuard which means allowed-ips for a peer will not be updated based upon dynamic routing updates. If you are going to utilize a dynamic routing protocol over wireguard interfaces it is recommended to configure them with a single peer per interface, disable route-allowed-ips and either configure allowed-ips to 0.0.0.0/0 or all ip addresses which might ever be routed over the interface including any multicast addresses required by the routing protocol.
+.
 ### Binaries
 
 This repository ships prebuilt binaries, made from the [WireGuard source code](https://git.zx2c4.com/WireGuard/tree/src/). If you're buliding from scratch, please be sure to use `-mabi=64` in your `CFLAGS` for compiling the userspace tools; otherwise there will be strange runtime errors. The binaries in this repository are statically linked against [musl libc](https://www.musl-libc.org/) to mitigate potential issues with Ubiquiti's outdated libc.
