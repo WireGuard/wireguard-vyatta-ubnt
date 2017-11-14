@@ -1,0 +1,10 @@
+type: u32
+help: Interval between retransmitting lost link state advertisements
+default: 5
+syntax:expression: $VAR(@) >= 3 && $VAR(@) <= 65535; "Must be between 3-65535"
+val_help: u32:3-65535; Retransmit interval in seconds (default 5)
+
+update: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" \
+          -c "ipv6 ospf6 retransmit-interval $VAR(@)"
+delete: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" \
+          -c "ipv6 ospf6 retransmit-interval 5"

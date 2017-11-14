@@ -1,0 +1,6 @@
+help: Disable split horizon
+create: vtysh -c "configure terminal" -c "interface $VAR(../../../../@)" -c "no ipv6 ripng split-horizon"
+delete: vtysh -c "configure terminal" -c "interface $VAR(../../../../@)" -c "ipv6 ripng split-horizon"
+
+commit:expression: ($VAR(../poison-reverse/) == "");  \
+    "You cannot have 'split-horizon poison-reverse' enabled with 'split-horizon' disabled for $VAR(../../../../@)"

@@ -1,0 +1,10 @@
+type: u32
+help: Link state transmit delay
+default: 1
+syntax:expression: $VAR(@) >= 1 && $VAR(@) <= 65535; "Must be between 1-65535"
+val_help: u32:1-65535; Link state transmit delay (default 1)
+
+update: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" \
+          -c "ipv6 ospf6 transmit-delay $VAR(@)"
+delete: vtysh -c "configure terminal" -c "interface $VAR(../../../@)" \
+          -c "ipv6 ospf6 transmit-delay 1"

@@ -1,0 +1,8 @@
+type: u32
+help: Router priority
+default: 1
+syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 255; "Must be between 0-255"
+val_help: u32:0-255; Priority (default 1)
+
+update:vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "ip ospf priority $VAR(@)"
+delete:vtysh -c "configure terminal" -c "interface $VAR(../../../@)" -c "no ip ospf priority"

@@ -1,0 +1,10 @@
+type: txt
+help: Plain text password
+syntax:expression: pattern $VAR(@) "^[^[:space:]]{1,8}$" ; "Password must be 8 characters or less"
+val_help: Plain text password (8 characters or less)
+
+update:vtysh -c "configure terminal" -c "interface $VAR(../../../../@)" \
+	 -c "no ip ospf authentication " -c "ip ospf authentication " \
+	 -c "ip ospf authentication-key $VAR(@)"
+delete:vtysh -c "configure terminal" -c "interface $VAR(../../../../@)" \
+	 -c "no ip ospf authentication " -c "no ip ospf authentication-key"
