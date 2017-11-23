@@ -1,10 +1,3 @@
 type: txt
 help: Optional preshared key
 val_help: File in /config/auth or 44-character (32-bytes) base64
-
-create:
-	echo "$VAR(@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then wg set $VAR(../../@) peer $VAR(../@) preshared-key <(echo "$key"); else wg set $VAR(../../@) peer $VAR(../@) preshared-key "$key"; fi'
-delete:
-	sudo wg set $VAR(../../@) peer $VAR(../@) preshared-key /dev/null
-update:
-	echo "$VAR(@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then wg set $VAR(../../@) peer $VAR(../@) preshared-key <(echo "$key"); else wg set $VAR(../../@) peer $VAR(../@) preshared-key "$key"; fi'
