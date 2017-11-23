@@ -12,13 +12,15 @@ delete: sudo ip link del dev $VAR(@)
 
 end: if [ "$COMMIT_ACTION" != DELETE ]; then
 	sudo ip link set down dev $VAR(@)
-	sudo ip link set up dev $VAR(@)
-	if [ "$VAR(route-allowed-ips/@)" == "true" ]; then
-		for i in $(sudo wg show $VAR(@) allowed-ips | sed 's/^.*\t//;s/ /\n/g' | sort -nr -k 2 -t /); do
-			if [ $i == "(none)" ]; then continue; fi
-			[[ $(sudo ip route get "$i" 2>/dev/null) == *dev\ $VAR(@)\ * ]] || sudo ip route add "$i" dev $VAR(@)
-		done
-	fi
+        if [ ! -n "$VAR(./disable)" ]; then
+          sudo ip link set up dev $VAR(@)
+          if [ "$VAR(route-allowed-ips/@)" == "true" ]; then
+            for i in $(sudo wg show $VAR(@) allowed-ips | sed 's/^.*\t//;s/ /\n/g' | sort -nr -k 2 -t /); do
+             if [ $i == "(none)" ]; then continue; fi
+             [[ $(sudo ip route get "$i" 2>/dev/null) == *dev\ $VAR(@)\ * ]] || sudo ip route add "$i" dev $VAR(@)
+            done
+          fi
+        fi
         sudo /usr/sbin/ubnt-interface.pl --main --if-name=$VAR(@) \
                                                 --if-path="interfaces wireguard" \
                                                 --template-path="interfaces wireguard var" \
