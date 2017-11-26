@@ -1,4 +1,7 @@
 #!/bin/sh
-dpkg-divert --package wireguard --rename \
-            --divert /opt/vyatta/share/perl5/Vyatta/Interface.pm.vyatta \
-            --add /opt/vyatta/share/perl5/Vyatta/Interface.pm
+
+if [ "$1" = "install" ] || dpkg --compare-versions "$(dpkg-query --showformat='${Version}' --show wireguard)" lt "0.0.20171111-1"; then
+  dpkg-divert --package wireguard --rename \
+              --divert /opt/vyatta/share/perl5/Vyatta/Interface.pm.vyatta \
+              --add /opt/vyatta/share/perl5/Vyatta/Interface.pm
+fi
