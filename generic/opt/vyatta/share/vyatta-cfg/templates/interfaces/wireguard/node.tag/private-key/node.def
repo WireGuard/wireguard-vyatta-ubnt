@@ -3,6 +3,6 @@ help: Private key
 val_help: File in /config/auth or 44-character (32-bytes) base64
 
 create:
-	echo "$VAR(@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then wg set $VAR(../@) private-key <(echo "$key"); else wg set $VAR(../@) private-key "$key"; fi'
+        echo "$VAR(@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then exec {FD}<<< $(echo "$key"); wg set $VAR(../@) private-key /proc/self/fd/$FD; else wg set $VAR(../@) private-key "$key"; fi'
 update:
-	echo "$VAR(@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then wg set $VAR(../@) private-key <(echo "$key"); else wg set $VAR(../@) private-key "$key"; fi'
+        echo "$VAR(@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then exec {FD}<<< $(echo "$key"); wg set $VAR(../@) private-key /proc/self/fd/$FD; else wg set $VAR(../@) private-key "$key"; fi'
