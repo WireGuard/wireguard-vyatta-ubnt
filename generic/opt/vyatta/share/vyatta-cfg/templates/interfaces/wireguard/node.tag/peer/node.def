@@ -7,6 +7,8 @@ val_help: Base64 encoded public key
 syntax:expression: pattern $VAR(@) "^[0-9a-zA-Z\+/]{43}=$" ;
 	"Key is not valid 44-character (32-bytes) base64"
 
+commit:expression: exec "${vyatta_sbindir}/vyatta-check-allowed-ips.pl --intf $VAR(../@) --peer $VAR(@)"
+
 end:
         if [ "$COMMIT_ACTION" = DELETE ] || [ -n "$VAR(./disable)" ]; then
           if [[ $(sudo wg show "$VAR(../@)" peers) == *"$VAR(@)"* ]]; then

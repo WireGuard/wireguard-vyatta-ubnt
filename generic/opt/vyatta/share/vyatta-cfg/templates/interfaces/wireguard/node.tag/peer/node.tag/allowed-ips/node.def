@@ -1,3 +1,5 @@
 multi:
 type: txt
-help: Allow connections from these IP addresses
+help: IP addresses allowed to traverse the peer
+val_help: <ip1>/<cidr1>[,<ip2>/<cidr2>]
+syntax:expression: exec "${vyatta_sbindir}/vyatta-check-allowed-ips.pl --allowed-ips $VAR(@)"
