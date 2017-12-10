@@ -1,5 +1,7 @@
 multi:
 type: txt
 help: IP addresses allowed to traverse the peer
-val_help: <ip1>/<cidr1>[,<ip2>/<cidr2>]
-syntax:expression: exec "${vyatta_sbindir}/vyatta-check-allowed-ips.pl --allowed-ips $VAR(@)"
+val_help: <x.x.x.x/x | h:h:h:h:h:h:h:h>[,x.x.x.x/x | h:h:h:h:h:h:h:h]...; Comma separated list of IP addresses to allow
+
+syntax:expression: exec "ips=$VAR(@); for ip in ${ips//,/ }; do /opt/vyatta/sbin/vyatta-find-type.pl $ip ipv4net ipv4 ipv6net ipv6 > /dev/null; done || exit 1";
+                   "Value must contain valid IP addresses"
