@@ -9,11 +9,7 @@ use Getopt::Long;
 use strict;
 
 sub usage {
-    print <<EOF;
-Usage: $0 --intf <interface>
-       $0 --intf <interface> --peer <peer>
-       $0  --allowed-ips <ip_address ...>
-EOF
+    print "Usage: ${0} --intf <interface> [--peer <peer>]\n";
     exit 1;
 }
 
@@ -21,17 +17,16 @@ my ($intf, $peer, @allowed_ips);
 
 GetOptions("intf=s"           => \$intf,
            "peer=s"           => \$peer,
-           "allowed-ips=s{,}" => \@allowed_ips,
 ) or usage();
 
-is_valid_allowed_ips(@allowed_ips) if @allowed_ips;
-is_valid_peer($intf, $peer) if $peer && $intf;
-is_valid_interface($intf, $peer) if $intf && !$peer && !@allowed_ips;
+usage() unless $intf;
+check_peer($intf, $peer) if $intf && $peer;
+check_interface($intf) if $intf && !$peer;
 
 exit 0;
 
 # Validate that allowed-ips are assigned to only one peer on an interface
-sub is_valid_interface {
+sub check_interface {
     my ($intf) = @_;
     my @allowed_ips;
     my $config = new Vyatta::Config;
@@ -40,7 +35,7 @@ sub is_valid_interface {
 
     # Get allowed-ips for all peers on the interface
     $config->setLevel("${path} peer");
-    push @allowed_ips, get_peer_allowed_ips("${path} peer ${_}") for $config->listNodes();
+    push @allowed_ips, peer_allowed_ips("${path} peer ${_}") for $config->listNodes();
 
     # Get array containing any duplicate members of @allowed_ips
     my @duplicates = duplicates(@allowed_ips);
@@ -58,14 +53,14 @@ sub is_valid_interface {
 }
 
 # Validate that peer doesn't contain duplicate allowed-ips
-sub is_valid_peer {
+sub check_peer {
     my ($intf, $peer) = @_;
     my $config = new Vyatta::Config;
     my $path = "interfaces wireguard ${intf} peer ${peer}";
     die "${0} error: invlaid interface and/or peer\n" unless $config->exists($path);
     
     # Get allowed-ips for the peer
-    @allowed_ips = get_peer_allowed_ips($path);
+    @allowed_ips = peer_allowed_ips($path);
     
     # Get array containing any duplicate members of @allowed_ips
     my @duplicates = duplicates(@allowed_ips);
@@ -83,21 +78,8 @@ sub is_valid_peer {
     return;
 }
 
-# Validate that the allowed-ips list provided contains valid ip addresses
-sub is_valid_allowed_ips {
-    my (@allowed_ips, $print_ips) = @_;
-    @allowed_ips = split(/,/,join(',',@allowed_ips));
-
-    for (@allowed_ips) {
-        my $ip = new NetAddr::IP->new($_);
-        die "Error: Allowed IP ${_} is not a valid IP address\n" unless $ip;
-    }
-
-    return;
-}
-
-# Get an array containing all allowed-ips assigned to a peer
-sub get_peer_allowed_ips {
+# Returns an array containing all allowed-ips assigned to a peer
+sub peer_allowed_ips {
     my ($peer) = @_;
     my @allowed_ips;
 
