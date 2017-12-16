@@ -24,7 +24,7 @@ end:
             sudo wg set $VAR(../@) peer $VAR(@) endpoint "$VAR(./endpoint/@)"
           fi
 
-          if [ -n "$VAR(../persistent-keepalive)" ]; then
+          if [ -n "$VAR(./persistent-keepalive)" ]; then
             sudo wg set $VAR(../@) peer $VAR(@) persistent-keepalive $VAR(./persistent-keepalive/@)
           else
             sudo wg set $VAR(../@) peer $VAR(@) persistent-keepalive 0
