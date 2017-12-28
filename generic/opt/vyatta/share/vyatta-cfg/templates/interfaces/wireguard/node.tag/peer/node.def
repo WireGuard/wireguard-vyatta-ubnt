@@ -31,7 +31,11 @@ end:
           fi
 
           if [ -n "$VAR(./preshared-key)" ]; then
-            echo "$VAR(./preshared-key/@)" | sudo bash -c 'read -r key; if [[ $key =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then exec {FD}<<< $(echo "$key"); wg set $VAR(../@) peer $VAR(@) preshared-key /proc/self/fd/$FD; else wg set $VAR(../@) peer $VAR(@) preshared-key "$key"; fi'
+            if [[ "$VAR(./preshared-key/@)" =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then
+              echo $VAR(./preshared-key/@) | sudo wg set $VAR(../@) peer $VAR(@) preshared-key /proc/self/fd/0
+            else
+              sudo wg set $VAR(../@) peer $VAR(@) preshared-key $VAR(./preshared-key/@)
+            fi
           else
             sudo wg set $VAR(../@) peer $VAR(@) preshared-key /dev/null
           fi
