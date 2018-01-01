@@ -5,4 +5,4 @@ val_help: txt; File in /config/auth
 
 syntax:expression: exec "if [[ !(\"$VAR(@)\" =~ ^[0-9a-zA-Z/+]{43}=$) ]]; then exec ${vyatta_sbindir}/check_file_in_config_dir $VAR(@) '/config/auth'; fi"
 
-commit:expression: exec "if [[ !(\"$VAR(@)\" =~ ^[0-9a-zA-Z/+]{43}=$) ]]; [[ -e $VAR(@) ]] || exit 1; fi" ; "Error: Preshared-key $VAR(@) not found"
+commit:expression: exec "if [[ !(\"$VAR(@)\" =~ ^[0-9a-zA-Z/+]{43}=$) ]]; then [[ -e $VAR(@) ]] || exit 1; fi" ; "Error: Preshared-key $VAR(@) not found"
