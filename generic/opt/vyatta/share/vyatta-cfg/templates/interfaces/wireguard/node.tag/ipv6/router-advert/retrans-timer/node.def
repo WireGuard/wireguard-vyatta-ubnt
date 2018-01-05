@@ -1,0 +1,7 @@
+type: u32
+help: Value to place in "Retrans Timer" field in RAs.
+
+default: 0
+
+val_help: <1-MAX>; Value in milliseconds to place in "Retrans Timer" field in RAs
+val_help: 0; Place 0, meaning "unspecified", in in "Retrans Timer" field in RAs

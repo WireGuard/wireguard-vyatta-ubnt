@@ -1,0 +1,9 @@
+type: u32
+help: Maximum interval between unsolicited multicast RAs
+
+# Default value per RFC-4861
+default: 600
+
+val_help: u32:4-1800; Maximum interval in seconds between unsolicited multicast RAs
+
+syntax:expression: ($VAR(@) >= 4 && $VAR(@) <= 1800) ; "Value must be between 4 and 1800"

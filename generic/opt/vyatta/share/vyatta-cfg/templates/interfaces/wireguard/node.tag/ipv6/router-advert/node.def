@@ -1,0 +1,37 @@
+
+priority: 999 # Run after parent interface is configured
+
+help: Configure parameters for sending Router Advertisements (RAs)
+
+end:
+	if [ "$COMMIT_ACTION" = "SET" -o "$COMMIT_ACTION" = "ACTIVE" ]; then
+	    echo "Re-generating radvd config file for interface $VAR(../../@)..."
+	    sudo /opt/vyatta/sbin/vyatta_gen_radvd.pl --generate $VAR(../../@)
+	    if [ $? != 0 ]; then
+		exit 1
+	    fi
+	elif [ "$COMMIT_ACTION" = "DELETE" ]; then
+	    echo "Deleting entry for interface $VAR(../../@) from radv config file..."
+	    sudo /opt/vyatta/sbin/vyatta_gen_radvd.pl --delete $VAR(../../@)
+	    if [ $? != 0 ]; then
+		exit 1
+	    fi
+	fi
+
+	if [ -e /var/run/radvd/radvd.pid ]; then
+	    if [ -s /etc/radvd.conf ]; then
+		echo "Re-starting radvd..."
+		sudo /etc/init.d/radvd stop
+		sudo /etc/init.d/radvd start
+	    else
+		echo "Stopping radvd..."
+		sudo /etc/init.d/radvd stop
+	    fi
+	else
+	    if [ -s /etc/radvd.conf ]; then
+		echo "Starting radvd..."
+		sudo /etc/init.d/radvd start
+	    else
+		echo "Not starting radvd."
+	    fi
+	fi

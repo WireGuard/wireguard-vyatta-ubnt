@@ -1,0 +1,10 @@
+type: txt
+help: Default router preference
+
+syntax:expression: $VAR(@) in "low", "medium", "high"; \
+       "Must be (low|medium|high)"
+
+val_help: low; Default router is low preference
+val_help: medium; Default router is medium preference (Default)
+val_help: high; Default router is high preference
+
