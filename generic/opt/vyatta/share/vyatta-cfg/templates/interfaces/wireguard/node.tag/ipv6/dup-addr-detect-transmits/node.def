@@ -1,0 +1,18 @@
+type: u32
+help: Number of NS messages to send while performing DAD
+
+val_help: <1-N>; Number of NS messages to send while performing DAD
+val_help: 0; Disable Duplicate Address Dectection (DAD)
+
+default: 1
+
+syntax:expression: ($VAR(@) >= 0) ; "Value must be >= 0"
+
+update:
+        sudo sh -c "echo $VAR(@) >/var/run/vyatta/ipv6.dad.$VAR(../../@)"
+        procfile=/proc/sys/net/ipv6/conf/$VAR(../../@)/dad_transmits
+        if [ -e $procfile ]; then
+            sudo sh -c "echo $VAR(@) > $procfile"
+        else
+            echo "Will set dup_addr_detect_transmits when $VAR(../../@) comes up"
+        fi

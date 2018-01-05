@@ -24,7 +24,7 @@ update:
         fi
 
         if [ "$all" -gt "$new" ]; then
-           echo "Warning: global source-validation overrides per interface"
+           echo "Warning: global soure-validation overrides per interface"
            global="disable"
            if [ "$all" -eq 1 ]; then
               global=strict
@@ -33,12 +33,8 @@ update:
            fi
            echo "Global value is $global"
         fi
-        if [ -d /sys/class/net/$VAR(../@) ] ; then
-                sudo sh -c "echo $new > \
-                       /proc/sys/net/ipv4/conf/$VAR(../../@)/rp_filter"
-        fi
+        sudo sh -c "echo $new > \
+               /proc/sys/net/ipv4/conf/$VAR(../../@)/rp_filter"
 
 delete:
-        if [ -d /sys/class/net/$VAR(../@) ] ; then
-                sudo sh -c "echo 0 > /proc/sys/net/ipv4/conf/$VAR(../../@)/rp_filter"
-        fi
+	sudo sh -c "echo 0 > /proc/sys/net/ipv4/conf/$VAR(../../@)/rp_filter"

@@ -1,0 +1,9 @@
+type: bool
+help: Flag that prefix can be used for on-link determination
+
+# Default value per RFC-4861.
+default: true
+
+val_help: true; Prefix can be used for on-link determination
+val_help: false; Prefix can not be used for on-link determination
+

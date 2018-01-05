@@ -1,0 +1,6 @@
+
+multi:
+
+type: ipv6
+
+help: IPv6 address of a Recursive DNS Server

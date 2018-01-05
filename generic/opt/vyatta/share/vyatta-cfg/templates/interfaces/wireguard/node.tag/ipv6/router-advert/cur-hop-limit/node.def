@@ -1,0 +1,10 @@
+type: u32
+help: Value to be placed in the "Current Hop Limit" field in RAs
+
+# Default value per Assignned Numbers RFC
+default: 64
+
+val_help: u32:1-255; Value to place in the "Current Hop Limit" field in RAs
+val_help: 0; Place 0, meaning "unspecified", in "Current Hop Limit" field
+
+syntax:expression: ($VAR(@) >= 0 && $VAR(@) <= 255) ; "Value must be between 0 and 255"

@@ -1,0 +1,25 @@
+#
+# This is a valueless node, hence has no type associated with it.
+#
+
+help: Enable acquisition of IPv6 address using stateless autoconfig
+
+update:
+	sudo touch /var/run/vyatta/ipv6.autoconf.$VAR(../../../@)
+	if [ -e /proc/sys/net/ipv6/conf/$VAR(../../../@)/autoconf ]; then
+	    echo "Enabling address auto-configuration for $VAR(../../../@)"
+	    sudo sh -c "echo 2 > /proc/sys/net/ipv6/conf/$VAR(../../../@)/accept_ra"
+        sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/$VAR(../../../@)/autoconf"
+	else
+	    echo "Address auto-configuration will be enabled when interface comes up."
+	fi
+
+delete:
+	sudo rm -f /var/run/vyatta/ipv6.autoconf.$VAR(../../../@)
+	if [ -e /proc/sys/net/ipv6/conf/$VAR(../../../@)/autoconf ]; then
+	    sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/$VAR(../../../@)/accept_ra"
+	    sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/$VAR(../../../@)/autoconf"
+	else
+	    echo "Address auto-configuration will be disabled when interface comes up."
+	fi
+

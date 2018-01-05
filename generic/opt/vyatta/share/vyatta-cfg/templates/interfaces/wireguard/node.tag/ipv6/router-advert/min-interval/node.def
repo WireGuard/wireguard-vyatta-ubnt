@@ -1,0 +1,10 @@
+type: u32
+help: Minimum interval between unsolicited multicast RAs
+
+# No default value.  Value will be determined algorithmically based
+# on the value of MaxRtrAdvInterval if not set by the user. Algorithm
+# is specified in RFC-4861.
+
+val_help: u32:3-1350; Minimum interval in seconds between unsolicited multicast RAs
+
+syntax:expression: ($VAR(@) >= 3 && $VAR(@) <= 1350) ; "Value must be between 3 and 1350"
