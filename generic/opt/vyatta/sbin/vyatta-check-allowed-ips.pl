@@ -13,7 +13,7 @@ sub usage {
     exit 1;
 }
 
-my ($intf, $peer, @allowed_ips);
+my ($intf, $peer);
 
 GetOptions("intf=s"           => \$intf,
            "peer=s"           => \$peer,
@@ -60,7 +60,7 @@ sub check_peer {
     die "${0} error: invlaid interface and/or peer\n" unless $config->exists($path);
     
     # Get allowed-ips for the peer
-    @allowed_ips = peer_allowed_ips($path);
+    my @allowed_ips = peer_allowed_ips($path);
     
     # Get array containing any duplicate members of @allowed_ips
     my @duplicates = duplicates(@allowed_ips);
