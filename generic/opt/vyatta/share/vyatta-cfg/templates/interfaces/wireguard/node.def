@@ -21,10 +21,6 @@ end: if [ "$COMMIT_ACTION" != DELETE ]; then
             done
           fi
         fi
-        sudo /usr/sbin/ubnt-interface.pl --main --if-name=$VAR(@) \
-                                                --if-path="interfaces wireguard" \
-                                                --template-path="interfaces wireguard var" \
-                                                --cfg-root-path="interfaces wireguard $VAR(@)"
      fi
 
 commit:expression: $VAR(./private-key) != "" ;
