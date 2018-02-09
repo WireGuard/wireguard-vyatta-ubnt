@@ -7,3 +7,9 @@ val_help: broadcast; Broadcast network type
 val_help: non-broadcast; Non-broadcast network type
 val_help: point-to-multipoint; Point-to-multipoint network type
 val_help: point-to-point; Point-to-point network type
+update:expression: "vtysh-set -i $VAR(../../../@) \
+                              -c \"interface $VAR(../../../@)\" \
+                              -c \"ip ospf network $VAR(@)\"; "
+delete:expression: "vtysh-set -i $VAR(../../../@) --noerr \
+                              -c \"interface $VAR(../../../@)\" \
+                              -c \"no ip ospf network\"; "

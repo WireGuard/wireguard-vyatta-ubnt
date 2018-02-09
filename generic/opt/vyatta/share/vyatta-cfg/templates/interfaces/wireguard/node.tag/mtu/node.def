@@ -1,4 +1,5 @@
 type: u32
+priority: 382
 help: Maximum Transmission Unit (MTU)
 syntax:expression: $VAR(@) >= 64 && $VAR(@) <= 8024; "Must be between 64-8024"
 val_help: u32:64-8024; Maximum Transmission Unit (MTU)
@@ -10,5 +11,13 @@ syntax:expression: exec " \
            exit 1; \
        fi"
 
-update: ip link set $VAR(../@) mtu $VAR(@)
-delete: ip link set $VAR(../@) mtu 1420
+default: 1420
+
+update:
+    if [ -d /sys/class/net/$VAR(../@) ] ; then
+        ip link set $VAR(../@) mtu $VAR(@)
+    fi
+delete:
+    if [ -d /sys/class/net/$VAR(../@) ] ; then
+        ip link set $VAR(../@) mtu 1420
+    fi

@@ -1,9 +1,0 @@
-type: bool
-help: Value to be placed in the "other configuration" flag in RAs
-
-# Default value per RFC-4861.
-default: false
-allowed: echo -n "true false"
-
-val_help: true; Place "true" in "other configuration" flag in RAs
-val_help: false; Place "false" in "other configuration" flag in RAs

@@ -1,5 +1,5 @@
 multi:
-priority: 999 # Run after interface has been configured
+priority: 460 # Run after interface has been configured
 type: ipv4net,ipv6net
 val_help: ipv4net; IPv4 address and prefix length
 val_help: ipv6net; IPv6 address and prefix length
@@ -7,7 +7,7 @@ help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
-commit:expression: exec "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../@)"
+commit:expression: exec "sudo /opt/vyatta/sbin/ubnt-interface --valid-addr-commit $VAR(@@) --dev $VAR(../@)"
 
 create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../@) $VAR(@)
 

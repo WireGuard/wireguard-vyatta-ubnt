@@ -1,9 +1,0 @@
-type: bool
-
-help: Whether prefix can be used for address auto-configuration
-
-# Default value per RFC-4861.
-default: true
-
-val_help: true; Prefix can be used for stateless address auto-configuration
-val_help: false; Prefix can not be used for stateless address auto-configuration
