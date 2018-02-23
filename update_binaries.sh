@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 declare -A BOARDS
 BOARDS[e50]=mipsel
 BOARDS[e100]=mips
