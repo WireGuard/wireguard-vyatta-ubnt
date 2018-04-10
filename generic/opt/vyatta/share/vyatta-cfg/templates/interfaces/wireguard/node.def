@@ -6,7 +6,7 @@ val_help: <wgN>; WireGuard interface name
 syntax:expression: pattern $VAR(@) "^wg[0-9]+$" \
                    ; "wg must be (wg0-wg999)"
 
-create: sudo ip link add dev $VAR(@) type wireguard
+create: ip link show dev $VAR(@) &>/dev/null || sudo ip link add dev $VAR(@) type wireguard
 
 delete: sudo ip link del dev $VAR(@)
 
