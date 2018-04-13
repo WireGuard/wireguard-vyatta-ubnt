@@ -20,6 +20,11 @@ GetOptions("intf=s"           => \$intf,
 ) or usage();
 
 usage() unless $intf;
+if ($intf =~ /^(wg\d{0,3})$/) {
+    $intf = $1;
+} else {
+    die "Invalid interface";
+}
 check_peer($intf, $peer) if $intf && $peer;
 check_interface($intf) if $intf && !$peer;
 
@@ -31,10 +36,11 @@ sub check_interface {
     my @allowed_ips;
     my $config = new Vyatta::Config;
     my $path = "interfaces wireguard ${intf}";
-    die "${0} error: invlaid interface\n" unless $config->exists($path);
+    die "${0} error: invalid interface\n" unless $config->exists($path);
 
     # Get allowed-ips for all peers on the interface
     $config->setLevel("${path} peer");
+    check_peer($intf, $_) for $config->listNodes();
     push @allowed_ips, peer_allowed_ips("${path} peer ${_}") for $config->listNodes();
 
     # Get array containing any duplicate members of @allowed_ips
@@ -49,6 +55,7 @@ sub check_interface {
         }
         die $err_str;
     }
+
     return; 
 }
 
@@ -57,7 +64,7 @@ sub check_peer {
     my ($intf, $peer) = @_;
     my $config = new Vyatta::Config;
     my $path = "interfaces wireguard ${intf} peer ${peer}";
-    die "${0} error: invlaid interface and/or peer\n" unless $config->exists($path);
+    die "${0} error: invalid interface and/or peer\n" unless $config->exists($path);
     
     # Get allowed-ips for the peer
     my @allowed_ips = peer_allowed_ips($path);
@@ -75,6 +82,28 @@ sub check_peer {
         die $err_str;
     }
     
+    $config->setLevel("interfaces wireguard ${intf}");
+    if ($config->returnValue("route-allowed-ips") == "true") {
+        my $conflict = check_routes(@allowed_ips);
+        if ($conflict) {
+            die "Error: Allowed IP " . $conflict . " on interface ${intf} peer ${peer} conflicts with an existing route. route-allowed-ips cannot be enabled.\n";
+        }
+    }
+
+    return;
+}
+
+sub check_routes {
+    my (@allowed_ips) = @_;
+
+    $ENV{"PATH"}="/bin:/usr/bin";
+    my @routes = `/bin/ip route show | grep -v ${intf} | cut -d ' ' -f1`;
+    chomp @routes;
+
+    foreach my $ip (@allowed_ips) {
+       $ip = "default" if $ip = "0.0.0.0/0";
+       return $ip if grep { /^$ip/ } @routes;
+    }
     return;
 }
 
