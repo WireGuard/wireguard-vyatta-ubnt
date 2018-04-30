@@ -1,4 +1,5 @@
 tag:
+priority: 920
 type: txt
 help: Peer public key
 
