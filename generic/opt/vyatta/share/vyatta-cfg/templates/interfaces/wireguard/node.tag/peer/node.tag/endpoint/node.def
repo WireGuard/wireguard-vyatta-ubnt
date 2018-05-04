@@ -1,2 +1,13 @@
+priority: 920
 type: txt
 help: Remote endpoint
+
+create:
+       if [ -z "$VAR(../disable)" ]; then
+           sudo wg set $VAR(../../@) peer $VAR(../@) endpoint "$VAR(@)"
+       fi
+
+update:
+       if [ -z "$VAR(../disable)" ]; then
+           sudo wg set $VAR(../../@) peer $VAR(../@) endpoint "$VAR(@)"
+       fi

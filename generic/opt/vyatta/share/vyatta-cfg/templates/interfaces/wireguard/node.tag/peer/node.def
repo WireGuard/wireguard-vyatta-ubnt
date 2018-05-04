@@ -1,5 +1,4 @@
 tag:
-priority: 920
 type: txt
 help: Peer public key
 
@@ -20,10 +19,6 @@ end:
 
           ALLOWED=$(echo "$VAR(./allowed-ips/@)" | tr ' ' ',' | tr -d "'")
           sudo wg set $VAR(../@) peer $VAR(@) allowed-ips "$ALLOWED"
-
-          if [ -n "$VAR(./endpoint)" ]; then
-            sudo wg set $VAR(../@) peer $VAR(@) endpoint "$VAR(./endpoint/@)"
-          fi
 
           if [ -n "$VAR(./persistent-keepalive)" ]; then
             sudo wg set $VAR(../@) peer $VAR(@) persistent-keepalive $VAR(./persistent-keepalive/@)
