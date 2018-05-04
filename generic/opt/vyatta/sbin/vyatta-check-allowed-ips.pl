@@ -101,7 +101,7 @@ sub check_routes {
     chomp @routes;
 
     foreach my $ip (@allowed_ips) {
-       $ip = "default" if $ip = "0.0.0.0/0";
+       $ip = "default" if $ip eq "0.0.0.0/0";
        return $ip if grep { /^$ip/ } @routes;
     }
     return;
