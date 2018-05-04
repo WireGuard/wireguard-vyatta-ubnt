@@ -83,7 +83,7 @@ sub check_peer {
     }
     
     $config->setLevel("interfaces wireguard ${intf}");
-    if ($config->returnValue("route-allowed-ips") == "true") {
+    if ($config->returnValue("route-allowed-ips") eq "true") {
         my $conflict = check_routes(@allowed_ips);
         if ($conflict) {
             die "Error: Allowed IP " . $conflict . " on interface ${intf} peer ${peer} conflicts with an existing route. route-allowed-ips cannot be enabled.\n";
