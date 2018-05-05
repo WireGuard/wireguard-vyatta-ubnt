@@ -12,6 +12,11 @@ commit:expression: exec "${vyatta_sbindir}/vyatta-check-allowed-ips.pl --intf $V
 end:
         if [ "$COMMIT_ACTION" = DELETE ] || [ -n "$VAR(./disable)" ]; then
           if [[ $(sudo wg show "$VAR(../@)" peers) == *"$VAR(@)"* ]]; then
+            if [ "$VAR(../route-allowed-ips/@)" == "true" ]; then
+              for allowed_ip in $(sudo wg show $VAR(../@) allowed-ips | awk '$1=="$VAR(@)" {$1=""; print $0}'); do
+                sudo ip route del "$allowed_ip" dev $VAR(../@) 2> /dev/null
+              done
+            fi
             sudo wg set $VAR(../@) peer "$VAR(@)" remove
           fi
         else
