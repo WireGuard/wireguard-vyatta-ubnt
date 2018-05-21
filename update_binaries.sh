@@ -5,6 +5,9 @@ BOARDS[e100]=mips
 BOARDS[e200]=mips
 BOARDS[e300]=mips
 BOARDS[e1000]=mips
+BOARDS[ugw3]=mips
+BOARDS[ugw4]=mips
+BOARDS[ugwxg]=mips
 
 for board in "${!BOARDS[@]}"
 do
