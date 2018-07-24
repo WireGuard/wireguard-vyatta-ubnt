@@ -4,4 +4,7 @@ if [ "$1" = "install" ] || dpkg --compare-versions "$(dpkg-query --showformat='$
   dpkg-divert --package wireguard --rename \
               --divert /opt/vyatta/share/perl5/Vyatta/Interface.pm.vyatta \
               --add /opt/vyatta/share/perl5/Vyatta/Interface.pm
+  dpkg-divert --package wireguard --rename \
+              --divert /opt/vyatta/share/vyatta-cfg/templates/firewall/options/mss-clamp/interface-type/node.def.vyatta \
+              --add /opt/vyatta/share/vyatta-cfg/templates/firewall/options/mss-clamp/interface-type/node.def
 fi
