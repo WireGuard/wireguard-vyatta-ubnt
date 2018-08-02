@@ -1,6 +1,6 @@
 Package: wireguard
 Source: wireguard
-Version: 0.0.20180731-1
+Version: 0.0.20180731-2
 Architecture: mips
 Maintainer: Jason A. Donenfeld <Jason@zx2c4.com>
 Section: net
