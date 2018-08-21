@@ -264,7 +264,7 @@ sub new {
         my $vifpath = $net_prefix{$prefix}{vif};
 
         # Interface name has vif, but this type doesn't support vif!
-        return if ( $vif && !$vifpath );
+        return if ( defined($vif) && !$vifpath );
 
         # Check path if given
         return if ( $#_ >= 0 && join( ' ', @_ ) ne $type );
