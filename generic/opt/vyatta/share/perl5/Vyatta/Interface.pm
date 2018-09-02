@@ -270,7 +270,7 @@ sub new {
         return if ( $#_ >= 0 && join( ' ', @_ ) ne $type );
 
         my $path = "interfaces $type $dev";
-        $path .= " $vifpath $vif" if $vif;
+        $path .= " $vifpath $vif" if defined($vif);
 
 	my $self = {
 	    name => $name,
