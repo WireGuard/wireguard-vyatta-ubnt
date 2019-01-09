@@ -13,7 +13,7 @@ define gen_deb
 	sed -i "s/Architecture: .*/Architecture: $(2)/" package/scratch/debian/control
         $(TAR) --owner=root:0 --group root:0 -czf package/scratch/control.tar.gz -C package/scratch/debian .
         echo 2.0 > package/scratch/debian-binary
-        $(AR) -rcs package/$(shell sed -n 's/Version: \(.*\)/wireguard-$(1)-\1.deb/p' debian/control) package/scratch/debian-binary package/scratch/data.tar.gz package/scratch/control.tar.gz
+        $(AR) -rcs package/$(shell sed -n 's/Version: \(.*\)/wireguard-$(1)-\1.deb/p' debian/control) package/scratch/debian-binary package/scratch/control.tar.gz package/scratch/data.tar.gz
         rm -rf package/scratch
 endef
 
