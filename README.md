@@ -3,25 +3,59 @@
 This is a Vyatta module and pre-built binaries for the Ubiquiti EdgeRouter
 to support [WireGuard](https://www.wireguard.io/).
 
+## Table of Contents
+* [Installation](#installation)
+* [Uninstallation](#uninstallation)
+* [Usage](#usage)
+* [Routing](#routing)
+* [Binaries](#binaries)
+* [Packaging](#packaging)
+* [Build from scratch](#build-from-scratch)
+
+---
+
 ### Installation
+Download the [latest release](https://github.com/Lochnair/vyatta-wireguard/releases) for your model and then install it via:
+```bash
+sudo dpkg -i wireguard-${BOARD}-${RELEASE}.deb
+```
 
-Download the [latest release](https://github.com/Lochnair/vyatta-wireguard/releases) for your model (or build it yourself
-here with `make`) and then install it via:
+After you will have be able to create a `wireguard` interface (`show interfaces`).
 
-    $ sudo dpkg -i ./wireguard-octeon-${RELEASE}.deb
-    or
-    $ sudo dpkg -i ./wireguard-ralink-${RELEASE}.deb
+---
 
-After you'll be able to have a `wireguard` section in `interfaces`.
+### Uninstallation
+#### Private key
+Determine if the private key is stored as a file by running `show interfaces wireguard`; if the  `private key` line is a path then run the following command otherwise jump to [Remove the configuration](#remove-the-configuration)
+```bash
+sudo rm /config/auth/wg.key
+```
+
+#### Remove the configuration
+```bash
+configure
+
+delete interfaces wireguard
+
+commit
+save
+exit
+```
+
+#### Remove the package
+```bash
+sudo dpkg --remove wireguard
+```
+---
 
 ### Usage
+You can learn about how to actually use WireGuard on [WireGuard.com](https://www.wireguard.com/).  All of the concepts are explained in depth..
 
-You can learn about how to actually use WireGuard on the
-[website](https://www.wireguard.io/). All of the concepts translate
-evenly here. Here's an example vyatta configuration:
+Here is a simple example of a configuration for vyatta/EdgeOS:
 
+```bash
+wg genkey | tee /config/auth/wg.key | wg pubkey >  wg.public
 
-```
 configure
 
 set interfaces wireguard wg0 address 192.168.33.1/24
@@ -37,21 +71,50 @@ set interfaces wireguard wg0 peer aBaxDzgsyDk58eax6lt3CLedDt6SlVHnDxLG2K5UdV4= a
 
 set interfaces wireguard wg0 private-key /config/auth/wg.key
 
+set firewall name WAN_LOCAL rule 20 action accept
+set firewall name WAN_LOCAL rule 20 protocol udp
+set firewall name WAN_LOCAL rule 20 description 'WireGuard'
+set firewall name WAN_LOCAL rule 20 destination port 51820
+
 commit
+save
+exit
 ```
 
-If you prefer not to put private keys in the config file, the `private-key` and `preshared-key` items can alternatively take a file path on the filesystem, such as one in `/config/auth/`.
+The `private-key` and `preshared-key` fields can take the key value or a file path.
+
+So if  you prefer not to put the keys in the config file, then the `private-key` and `preshared-key` field can alternatively take a file path on the filesystem, such as `/config/auth/`.
+
+---
 
 ### Routing
+Currenty there is no integration between the routing daemon and WireGuard which means allowed-ips for a peer will not be updated based upon dynamic routing updates.
 
-Currenty there is no integration between the routing daemon and WireGuard which means allowed-ips for a peer will not be updated based upon dynamic routing updates. If you are going to utilize a dynamic routing protocol over wireguard interfaces it is recommended to configure them with a single peer per interface, disable route-allowed-ips and either configure allowed-ips to 0.0.0.0/0 or all ip addresses which might ever be routed over the interface including any multicast addresses required by the routing protocol.
-.
+If you are going to utilize a dynamic routing protocol over wireguard interfaces it is recommended to configure them with a single peer per interface, disable route-allowed-ips and either configure allowed-ips to 0.0.0.0/0 or all ip addresses which might ever be routed over the interface including any multicast addresses required by the routing protocol.
+
+---
+
 ### Binaries
+This repository ships prebuilt binaries made from the [WireGuard source code](https://git.zx2c4.com/WireGuard/tree/src/).
 
-This repository ships prebuilt binaries, made from the [WireGuard source code](https://git.zx2c4.com/WireGuard/tree/src/). If you're buliding from scratch, please be sure to use `-mabi=64` in your `CFLAGS` for compiling the userspace tools; otherwise there will be strange runtime errors. The binaries in this repository are statically linked against [musl libc](https://www.musl-libc.org/) to mitigate potential issues with Ubiquiti's outdated libc.
+The binaries are statically linked against [musl libc](https://www.musl-libc.org/) to mitigate potential issues with Ubiquiti EdgeOS's outdated glibc.
+
+---
+
+### Packaging
+1. Clone the repo `git clone https://github.com/Lochnair/vyatta-wireguard`
+2. Get the WireGuard version number from Lochnair's build server's latest sucessfully build from [build.lochnair.net/](https://build.lochnair.net/job/ubiquiti/job/wireguard-fw2.0/lastCompletedBuild/) (e.g. refs/tags/0.0.20181218)
+3. Edit the verion number in `debian/control` to match the build server.
+4. Run `./update_binaries.sh`
+5. Run `make`
+6. Get the newly created deb files from the `package` folder. 
+
+---
+
+### Build from scratch
+If you are buliding from scratch, please be sure to use `-mabi=64` in your `CFLAGS` for compiling the userspace tools; otherwise there will be strange runtime errors.
 
 #### Kernel Module
-
 ```bash
 $ mkdir -p linux-src/linux-3.10
 $ cd linux-src/linux-3.10
@@ -72,7 +135,6 @@ $ ls -l WireGuard/src/wireguard.ko
 ```
 
 #### Userspace Tools
-
 ```bash
 $ cd OCTEON-SDK
 $ . ./env-setup OCTEON_CN50XX --no-runtime-model --verbose
