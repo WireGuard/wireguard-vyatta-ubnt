@@ -14,7 +14,7 @@ do
 	arch="${BOARDS[$board]}"
 
 	echo "Downloading the wg util for $board..."
-	curl -L -o "$board/usr/bin/wg" "https://build.lochnair.net/job/ubiquiti/job/wireguard/lastSuccessfulBuild/artifact/wg-$arch"
+	curl -L -o "$board/usr/bin/wg" "https://build.lochnair.net/job/ubiquiti/job/wireguard-tools/lastSuccessfulBuild/artifact/wg-$arch"
 	echo "Downloading the kernel module for $board..."
 	modpath=$(find "$board" -name wireguard.ko)
 	curl -L -o "$modpath" "https://build.lochnair.net/job/ubiquiti/job/wireguard/lastSuccessfulBuild/artifact/wireguard-$board.ko"
