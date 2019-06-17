@@ -5,6 +5,7 @@ to support [WireGuard](https://www.wireguard.io/).
 
 ## Table of Contents
 * [Installation](#installation)
+* [Upgrade](#upgrade)
 * [Uninstallation](#uninstallation)
 * [Usage](#usage)
 * [Routing](#routing)
@@ -21,6 +22,25 @@ sudo dpkg -i wireguard-${BOARD}-${RELEASE}.deb
 ```
 
 After you will have be able to create a `wireguard` interface (`show interfaces`).
+
+---
+
+### Upgrade
+Download the [latest release](https://github.com/Lochnair/vyatta-wireguard/releases) for your model and then perform upgrade with:
+```bash
+configure
+set interfaces wireguard wg0 route-allowed-ips false
+commit
+delete interfaces wireguard
+commit
+sudo rmmod wireguard
+sudo dpkg -i /path/to/wireguard-${BOARD}-${RELEASE}.deb
+sudo modprobe wireguard
+load
+commit
+exit
+```
+This allows the upgrade without reboot.
 
 ---
 
