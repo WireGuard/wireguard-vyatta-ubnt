@@ -123,7 +123,7 @@ The binaries are statically linked against [musl libc](https://www.musl-libc.org
 
 ### Packaging
 1. Clone the repo `git clone https://github.com/Lochnair/vyatta-wireguard`
-2. Get the WireGuard version number from Lochnair's build server's latest sucessfully build from [build.lochnair.net/](https://build.lochnair.net/job/ubiquiti/job/wireguard-fw2.0/lastCompletedBuild/) (e.g. refs/tags/0.0.20181218)
+2. Get the WireGuard version number from Lochnair's build server's latest successfully build from [build.lochnair.net/](https://build.lochnair.net/job/ubiquiti/job/wireguard-fw2.0/lastCompletedBuild/) (e.g. refs/tags/0.0.20181218)
 3. Edit the verion number in `debian/control` to match the build server.
 4. Run `./update_binaries.sh`
 5. Run `make`
