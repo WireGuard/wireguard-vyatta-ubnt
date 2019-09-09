@@ -11,6 +11,7 @@ define gen_deb
         $(TAR) --owner=root:0 --group root:0 -czf package/scratch/data.tar.gz -C generic . -C ../$(1) .
 	cp -a debian package/scratch/
 	sed -i "s/Architecture: .*/Architecture: $(2)/" package/scratch/debian/control
+	sed -i "s@KERNEL_VER@$$(find $(1)/lib/modules/ -maxdepth 1 -mindepth 1 -type d -printf "%f\n")@g" package/scratch/debian/preinst
         $(TAR) --owner=root:0 --group root:0 -czf package/scratch/control.tar.gz -C package/scratch/debian .
         echo 2.0 > package/scratch/debian-binary
         $(AR) -rcs package/$(shell sed -n 's/Version: \(.*\)/wireguard-$(1)-\1.deb/p' debian/control) package/scratch/debian-binary package/scratch/control.tar.gz package/scratch/data.tar.gz
