@@ -1,5 +1,14 @@
 #!/bin/sh
 
+case "$1" in
+  install|upgrade)
+    if [ "$(uname -r)" != "KERNEL_VER" ]; then
+      echo "This package contains the wireguard kernel modules for KERNEL_VER, you're trying to install it on $(uname -r). Aborting."
+      exit 1
+    fi
+    ;;
+esac
+
 if [ "$1" = "install" ] || dpkg --compare-versions "$(dpkg-query --showformat='${Version}' --show wireguard)" lt "0.0.20171111-1"; then
   dpkg-divert --package wireguard --rename \
               --divert /opt/vyatta/share/perl5/Vyatta/Interface.pm.vyatta \
