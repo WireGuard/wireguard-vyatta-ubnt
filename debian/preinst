@@ -20,3 +20,8 @@ if [ "$1" = "install" ] || dpkg --compare-versions "$(dpkg-query --showformat='$
               --divert /opt/vyatta/share/vyatta-cfg/templates/firewall/options/mss-clamp/interface-type/node.def.vyatta \
               --add /opt/vyatta/share/vyatta-cfg/templates/firewall/options/mss-clamp/interface-type/node.def
 fi
+if [ "$1" = "install" ] || dpkg --compare-versions "$(dpkg-query --showformat='${Version}' --show wireguard)" lt "0.0.20180731-1"; then
+  dpkg-divert --package wireguard --rename \
+              --divert /opt/vyatta/share/vyatta-cfg/templates/firewall/options/mss-clamp6/interface-type/node.def.vyatta \
+              --add /opt/vyatta/share/vyatta-cfg/templates/firewall/options/mss-clamp6/interface-type/node.def
+fi
