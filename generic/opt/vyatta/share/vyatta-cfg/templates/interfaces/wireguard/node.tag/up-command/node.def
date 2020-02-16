@@ -1,0 +1,4 @@
+type: txt
+help: Script or command executed after the interface went up
+val_help: txt; Command
+val_help: txt; Executable script in /config/scripts
