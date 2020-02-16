@@ -8,13 +8,17 @@ syntax:expression: pattern $VAR(@) "^wg[0-9]+$" \
 
 create: ip link show dev $VAR(@) &>/dev/null || sudo ip link add dev $VAR(@) type wireguard
 
-delete: sudo ip link del dev $VAR(@)
+delete: (eval "$VAR(down-command/@)" >/dev/null || exit 1) && sudo ip link del dev $VAR(@)
 
-end: if [ "$COMMIT_ACTION" != DELETE ]; then
-	sudo ip link set down dev $VAR(@)
+end:
+     if [ "$COMMIT_ACTION" != DELETE ]; then
+        eval "$VAR(down-command/@) >/dev/null" || exit 1;
+        sudo ip link set down dev $VAR(@)
         if [ ! -n "$VAR(./disable)" ]; then
           sudo ip link set up dev $VAR(@)
+          eval "$VAR(up-command/@) >/dev/null" || exit 1;
           if [ "$VAR(route-allowed-ips/@)" == "true" ]; then
+            [ -n "$VAR(./route-table)" ] && tnum="$VAR(./route-table/@)"
             for i in $(sudo wg show $VAR(@) allowed-ips | sed 's/^.*\t//;s/ /\n/g' | sort -nr -k 2 -t /); do
              if [ $i == "(none)" ]; then continue; fi
              [[ $(sudo ip route get "$i" 2>/dev/null) == *dev\ $VAR(@)\ * ]] || sudo ip route add "$i" dev $VAR(@)
