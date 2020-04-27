@@ -1,0 +1,33 @@
+.collect:
+  image: debian
+  stage: collect
+  needs:
+    - job: package:e50:v1
+      artifacts: true
+    - job: package:e50:v2
+      artifacts: true
+    - job: package:e100:v1
+      artifacts: true
+    - job: package:e100:v2
+      artifacts: true
+    - job: package:e200:v1
+      artifacts: true
+    - job: package:e200:v2
+      artifacts: true
+    - job: package:e300:v1
+      artifacts: true
+    - job: package:e300:v2
+      artifacts: true
+    - job: package:e1000:v1
+      artifacts: true
+    - job: package:e1000:v2
+      artifacts: true
+    - job: package:ugw3
+      artifacts: true
+    - job: package:ugw4
+      artifacts: true
+    - job: package:ugwxg
+      artifacts: true
+  artifacts:
+    paths:
+      - "*.deb"

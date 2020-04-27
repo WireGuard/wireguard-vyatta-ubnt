@@ -1,0 +1,33 @@
+variables:
+  E50_SRC_v1: "https://dl.ui.com/firmwares/edgemax/v1.10.11/gpl/GPL.ER-e50.v1.10.11.5274269.tar.bz2"
+  E50_SRC_v2: "https://dl.ui.com/firmwares/edgemax/v2.0.8-hotfix.1/gpl/GPL.ER-e50.v2.0.8-hotfix.1.5278088.tar.bz2"
+  E100_SRC_v1: "https://dl.ui.com/firmwares/edgemax/v1.10.11/gpl/GPL.ER-e100.v1.10.11.5274249.tar.bz2"
+  E100_SRC_v2: "https://dl.ui.com/firmwares/edgemax/v2.0.8-hotfix.1/gpl/GPL.ER-e100.v2.0.8-hotfix.1.5278088.tar.bz2"
+  E200_SRC_v1: "https://dl.ui.com/firmwares/edgemax/v1.10.11/gpl/GPL.ER-e200.v1.10.11.5274249.tar.bz2"
+  E200_SRC_v2: "https://dl.ui.com/firmwares/edgemax/v2.0.8-hotfix.1/gpl/GPL.ER-e200.v2.0.8-hotfix.1.5278088.tar.bz2"
+  E300_SRC_v1: "https://dl.ui.com/firmwares/edgemax/v1.10.11/gpl/GPL.ER-e300.v1.10.11.5274269.tar.bz2"
+  E300_SRC_v2: "https://dl.ui.com/firmwares/edgemax/v2.0.8-hotfix.1/gpl/GPL.ER-e300.v2.0.8-hotfix.1.5278088.tar.bz2"
+  E1000_SRC_v1: "https://dl.ui.com/firmwares/edgemax/v1.10.11/gpl/GPL.ER-e1000.v1.10.11.5274249.tar.bz2"
+  E1000_SRC_v2: "https://dl.ui.com/firmwares/edgemax/v2.0.8-hotfix.1/gpl/GPL.ER-e1000.v2.0.8-hotfix.1.5278088.tar.bz2"
+  UGW3_SRC: "https://dl.ui.com/unifi/firmware/UGW3/4.4.50.5272448/GPL.UGW3.v4.4.50.5272448.tbz2"
+  UGW4_SRC: "https://dl.ui.com/unifi/firmware/UGW4/4.4.50.5272479/GPL.UGW4.v4.4.50.5272479.tbz2"
+  UGWXG_SRC: "https://dl.ui.com/unifi/firmware/UGWXG/4.4.50.5272479/GPL.UGWXG.v4.4.50.5272479.tbz2"
+  MODULE_VERSION: "v1.0.20200426"
+  TOOLS_VERSION: "v1.0.20200319"
+
+stages:
+  - docker
+  - headers
+  - module-prepare
+  - module
+  - tools
+  - package
+  - collect
+
+include:
+  - local: "ci/docker.yml"
+  - local: "ci/headers.yml"
+  - local: "ci/module.yml"
+  - local: "ci/tools.yml"
+  - local: "ci/package.yml"
+  - local: "ci/collect.yml"

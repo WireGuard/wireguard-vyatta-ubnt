@@ -1,0 +1,160 @@
+.package:
+  image: debian
+  stage: package
+  script:
+    - apt update
+    - apt install -y gawk kmod
+    - export KERNEL=$(modinfo -F vermagic module/src/wireguard.ko | awk '{print $1;}')
+    - mkdir -p pkg/usr/bin pkg/lib/modules/$KERNEL/kernel/net
+    - cp -r DEBIAN pkg/DEBIAN
+    - cp -r opt pkg/opt
+    - cp module/src/wireguard.ko pkg/lib/modules/$KERNEL/kernel/net/wireguard.ko
+    - cp tools/src/wg pkg/usr/bin/wg
+    - dpkg-deb -b pkg
+    - mv pkg.deb $DEVICE-$SOFTWARE-$MODULE_VERSION-$TOOLS_VERSION.deb
+  artifacts:
+    paths:
+      - "*.deb"
+
+package:e50:v1:
+  extends: .package
+  needs:
+    - job: module:e50:v1
+      artifacts: true
+    - job: tools:mipsel
+      artifacts: true
+  variables:
+    DEVICE: e50
+    SOFTWARE: v1
+
+package:e50:v2:
+  extends: .package
+  needs:
+    - job: module:e50:v2
+      artifacts: true
+    - job: tools:mipsel
+      artifacts: true
+  variables:
+    DEVICE: e50
+    SOFTWARE: v2
+
+package:e100:v1:
+  extends: .package
+  needs:
+    - job: module:e100:v1
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: e50
+    SOFTWARE: v1
+
+package:e100:v2:
+  extends: .package
+  needs:
+    - job: module:e100:v2
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: e100
+    SOFTWARE: v2
+
+package:e200:v1:
+  extends: .package
+  needs:
+    - job: module:e200:v1
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: e200
+    SOFTWARE: v1
+
+package:e200:v2:
+  extends: .package
+  needs:
+    - job: module:e200:v2
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: e200
+    SOFTWARE: v2
+
+package:e300:v1:
+  extends: .package
+  needs:
+    - job: module:e300:v1
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: e300
+    SOFTWARE: v1
+
+package:e300:v2:
+  extends: .package
+  needs:
+    - job: module:e300:v2
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: e300
+    SOFTWARE: v2
+
+package:e1000:v1:
+  extends: .package
+  needs:
+    - job: module:e1000:v1
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: e1000
+    SOFTWARE: v1
+
+package:e1000:v2:
+  extends: .package
+  needs:
+    - job: module:e1000:v2
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: e1000
+    SOFTWARE: v2
+
+package:ugw3:
+  extends: .package
+  needs:
+    - job: module:ugw3
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: ugw3
+    SOFTWARE: v1
+
+package:ugw4:
+  extends: .package
+  needs:
+    - job: module:ugw4
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: ugw4
+    SOFTWARE: v1
+
+package:ugwxg:
+  extends: .package
+  needs:
+    - job: module:ugwxg
+      artifacts: true
+    - job: tools:mips
+      artifacts: true
+  variables:
+    DEVICE: ugwxg
+    SOFTWARE: v1
