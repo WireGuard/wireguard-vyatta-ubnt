@@ -10,7 +10,7 @@
     - cp -r opt pkg/opt
     - cp module/src/wireguard.ko pkg/lib/modules/$KERNEL/kernel/net/wireguard.ko
     - cp tools/src/wg pkg/usr/bin/wg
-    - sed -i "s/WIREGUARD_VER/$MODULE_VERSION/g" pkg/DEBIAN/control
+    - sed -i "s/WIREGUARD_VER/${MODULE_VERSION##v}/g" pkg/DEBIAN/control
     - sed -i "s/KERNEL_VER/$KERNEL/g" pkg/DEBIAN/preinst
     - dpkg-deb -b -Z gzip pkg
     - mv pkg.deb $DEVICE-$SOFTWARE-$MODULE_VERSION-$TOOLS_VERSION.deb
