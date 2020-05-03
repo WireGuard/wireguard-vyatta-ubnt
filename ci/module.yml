@@ -4,11 +4,11 @@ module:prepare:
   stage: module-prepare
   needs: []
   script:
-    - curl -L -o wireguard.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
-    - curl -L -o wireguard.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.asc
-    - unxz wireguard.tar.xz
-    - gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.asc wireguard.tar.asc wireguard.tar
-    - tar -xJ -f wireguard.tar --one-top-level=module --strip-components=1
+    - curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
+    - curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.asc
+    - unxz wireguard-linux-compat-$MODULE_VERSION.tar.xz
+    - gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-linux-compat-$MODULE_VERSION.tar.asc wireguard-linux-compat-$MODULE_VERSION.tar
+    - tar -xf wireguard-linux-compat-$MODULE_VERSION.tar --one-top-level=module --strip-components=1
     - cd $CI_PROJECT_DIR/module
     - patch -p1 -i $CI_PROJECT_DIR/disable_kmalloc.patch
     - sed -i 's/ --dirty//g' src/Makefile
