@@ -1,0 +1,33 @@
+From 00a970f9ce4a97e8f46f24c90c0242a658143457 Mon Sep 17 00:00:00 2001
+From: Nils Andreas Svee <me@lochnair.net>
+Date: Sun, 3 Mar 2019 23:44:16 +0100
+Subject: [PATCH] Only use __vmalloc for now
+
+---
+ src/compat/compat.h | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/src/compat/compat.h b/src/compat/compat.h
+index 7a61e4c..f2b3d5e 100644
+--- a/src/compat/compat.h
++++ b/src/compat/compat.h
+@@ -464,16 +464,6 @@ static inline __be32 our_inet_confirm_addr(struct net *net, struct in_device *in
+ #include <linux/slab.h>
+ static inline void *kvmalloc_ours(size_t size, gfp_t flags)
+ {
+-	gfp_t kmalloc_flags = flags;
+-	void *ret;
+-	if (size > PAGE_SIZE) {
+-		kmalloc_flags |= __GFP_NOWARN;
+-		if (!(kmalloc_flags & __GFP_REPEAT) || (size <= PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+-			kmalloc_flags |= __GFP_NORETRY;
+-	}
+-	ret = kmalloc(size, kmalloc_flags);
+-	if (ret || size <= PAGE_SIZE)
+-		return ret;
+ 	return __vmalloc(size, flags, PAGE_KERNEL);
+ }
+ static inline void *kvzalloc_ours(size_t size, gfp_t flags)
+-- 
+2.21.0
+
