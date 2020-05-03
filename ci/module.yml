@@ -10,7 +10,7 @@ module:prepare:
     - gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.asc wireguard.tar.asc wireguard.tar
     - tar -xJ -f wireguard.tar --one-top-level=module --strip-components=1
     - cd $CI_PROJECT_DIR/module
-    - curl -L https://gist.githubusercontent.com/Lochnair/805bf9ab96742d0fe1c25e4130268307/raw/29e37d43a5247a3f2584ef0d6d553ee9a4532e12/only-use-__vmalloc-for-now.patch | patch -p1
+    - patch -p1 -i $CI_PROJECT_DIR/disable_kmalloc.patch
     - sed -i 's/ --dirty//g' src/Makefile
   artifacts:
     paths:
