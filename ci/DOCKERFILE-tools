@@ -23,7 +23,8 @@ RUN apk add --no-cache \
         su-exec \
         texinfo \
         wget \
-		kmod
+        kmod \
+        gnupg
 
 
 # Let any user elevate to root
