@@ -5,7 +5,7 @@
   script:
     - apk add gnupg
     - curl -L -o wireguard-tools-$TOOLS_VERSION.tar.xz https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.xz
-    - curl -L -o wireguard-tools-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-tools-$MODULE_VERSION.tar.asc
+    - curl -L -o wireguard-tools-$TOOLS_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-tools-$TOOLS_VERSION.tar.asc
     - unxz wireguard-tools-$TOOLS_VERSION.tar.xz
     - gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-tools-$TOOLS_VERSION.tar.asc wireguard-tools-$TOOLS_VERSION.tar
     - tar -xf wireguard-tools-$TOOLS_VERSION.tar --one-top-level=tools --strip-components=1
