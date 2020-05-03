@@ -4,7 +4,7 @@ Version: WIREGUARD_VER-1
 Architecture: mips
 Maintainer: Jason A. Donenfeld <Jason@zx2c4.com>
 Section: net
-Homepage: https://www.wireguard.io
+Homepage: https://www.wireguard.com
 Description: fast, modern, secure kernel VPN tunnel
  WireGuard is a novel VPN that runs inside the Linux Kernel and uses
  state-of-the-art cryptography (the "Noise" protocol). It aims to be

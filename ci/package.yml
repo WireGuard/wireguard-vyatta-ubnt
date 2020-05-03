@@ -6,12 +6,12 @@
     - apt install -y gawk kmod
     - export KERNEL=$(modinfo -F vermagic module/src/wireguard.ko | awk '{print $1;}')
     - mkdir -p pkg/usr/bin pkg/lib/modules/$KERNEL/kernel/net
-    - cp -r DEBIAN pkg/DEBIAN
+    - cp -r debian pkg/debian
     - cp -r opt pkg/opt
     - cp module/src/wireguard.ko pkg/lib/modules/$KERNEL/kernel/net/wireguard.ko
     - cp tools/src/wg pkg/usr/bin/wg
-    - sed -i "s/WIREGUARD_VER/${MODULE_VERSION##v}/g" pkg/DEBIAN/control
-    - sed -i "s/KERNEL_VER/$KERNEL/g" pkg/DEBIAN/preinst
+    - sed -i "s/WIREGUARD_VER/${MODULE_VERSION##v}/g" pkg/debian/control
+    - sed -i "s/KERNEL_VER/$KERNEL/g" pkg/debian/preinst
     - dpkg-deb -b -Z gzip pkg
     - mv pkg.deb $DEVICE-$SOFTWARE-$MODULE_VERSION-$TOOLS_VERSION.deb
   artifacts:
