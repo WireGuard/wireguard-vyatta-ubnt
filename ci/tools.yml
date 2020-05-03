@@ -8,7 +8,8 @@
     - curl -L -o wireguard-tools-$TOOLS_VERSION.tar.asc https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.asc
     - unxz wireguard-tools-$TOOLS_VERSION.tar.xz
     - gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-tools-$TOOLS_VERSION.tar.asc wireguard-tools-$TOOLS_VERSION.tar
-    - tar -xf wireguard-tools-$TOOLS_VERSION.tar --one-top-level=tools --strip-components=1
+    - tar -xf wireguard-tools-$TOOLS_VERSION.tar
+    - mv wireguard-tools-$TOOLS_VERSION tools
     - cd $CI_PROJECT_DIR/tools/src
     - CC="$ARCH-linux-musl-gcc" LDLIBS="-static" make -j$(nproc)
     - $ARCH-linux-musl-strip --strip-unneeded wg
