@@ -1,9 +1,9 @@
-Wireguard for Ubiquity
+WireGuard for Ubiquiti
 ======================
 
-This repository contains the vyatta configuration files to integrate Wireguard with Ubiquity Networks devices.
+This repository contains the vyatta configuration files to integrate WireGuard with Ubiquiti Networks devices.
 
-Please see below for instructions on how to install the prebuilt deb packages listed under [releases](https://github.com/FossoresLP/vyatta-wireguard/releases).
+Please see below for instructions on how to install the prebuilt deb packages listed under [releases](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases).
 
 Table of Contents
 -----------------
@@ -21,7 +21,7 @@ Table of Contents
 Installation
 ------------
 
-Download the [latest release](https://github.com/FossoresLP/vyatta-wireguard/releases) for your model and then install it via:
+Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases) for your model and then install it via:
 
 ```bash
 sudo dpkg -i wireguard.deb
@@ -34,7 +34,7 @@ After you will have be able to create a `wireguard` interface (`show interfaces`
 Upgrade
 -------
 
-Download the [latest release](https://github.com/FossoresLP/vyatta-wireguard/releases) for your model and then perform upgrade with:
+Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases) for your model and then perform upgrade with:
 
 ```bash
 configure
@@ -138,7 +138,7 @@ If you are going to utilize a dynamic routing protocol over wireguard interfaces
 Binaries
 --------
 
-Prebuild binaries are available under [releases](https://github.com/FossoresLP/vyatta-wireguard/releases)
+Prebuild binaries are available under [releases](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases)
 
 The binaries are statically linked against [musl libc](https://www.musl-libc.org/) to mitigate potential issues with Ubiquiti EdgeOS's outdated glibc.
 
