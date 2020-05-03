@@ -3,6 +3,7 @@
   stage: tools
   needs: []
   script:
+    - apk add gnupg
     - curl -L -o wireguard-tools-$TOOLS_VERSION.tar.xz https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.xz
     - curl -L -o wireguard-tools-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-tools-$MODULE_VERSION.tar.asc
     - unxz wireguard-tools-$TOOLS_VERSION.tar.xz
