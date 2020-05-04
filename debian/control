@@ -1,7 +1,7 @@
 Package: wireguard
 Source: wireguard
 Version: WIREGUARD_VER-1
-Architecture: mips
+Architecture: PACKAGE_ARCH
 Maintainer: Jason A. Donenfeld <Jason@zx2c4.com>
 Section: net
 Homepage: https://www.wireguard.com
