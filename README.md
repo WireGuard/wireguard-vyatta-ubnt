@@ -14,6 +14,7 @@ Table of Contents
 * [Usage](#usage)
 * [Routing](#routing)
 * [Binaries](#binaries)
+* [Persistence on Reboot on USG](#persistence-on-reboot-on-usg)
 
 ---
 
@@ -136,3 +137,92 @@ Binaries
 Prebuilt binaries are available under [releases](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases).
 
 The binaries are statically linked against [musl libc](https://www.musl-libc.org/) to mitigate potential issues with Ubiquiti EdgeOS's outdated glibc.
+
+---
+
+Persistence on Reboot on USG
+----------------------------
+
+On the USG3/4 Pro the commandline setup above does not survive reboot/re-provisioning. The settings need to be added to a `config.gateway.json` file and placed on the *controller*. Depending on your particular setup, this file can be located in several locations. You can use the *commented* example below and follow the instructions in [Unifi - USG Advanced Configuration Using config.gateway.json](https://help.ui.com/hc/en-us/articles/215458888-UniFi-USG-Advanced-Configuration-Using-config-gateway-json) to create the file in the appropriate location. The firewall changes can be made in the UI, or added to the file.
+
+```json
+{
+  "firewall": {
+    "group": {
+      "network-group": {
+        "remote_user_vpn_network": {
+          "description": "Remote User VPN subnets",
+          "network": [
+            "10.16.1.0/24"  //Subnet assigned to wireguard clients
+          ]
+        }
+      }
+    }
+  },
+  "interfaces": {
+    "wireguard": {
+      "wg0": {
+        "address": [
+          "10.16.1.1/24"  //USG gateway address in wireguard subnet
+        ],
+        "firewall": {
+          "in": {
+            "name": "LAN_IN"
+          },
+          "local": {
+            "name": "LAN_LOCAL"
+          },
+          "out": {
+            "name": "LAN_OUT"
+          }
+        },
+        "listen-port": "51820",  //Listen port - can be customised, adjust firewall port accordingly
+        "mtu": "1500",
+        "peer": [{
+          "wZ0j/CM/nJ6tdIxFTtBLOxbIoTNoK0Tjn49rZgasLUM=": {   //Peer 1 Public Key
+            "allowed-ips": [
+              "10.16.1.50/32"               //Peer IP address
+            ],
+            "persistent-keepalive": 25
+          }
+        },
+        {
+          "wZ0j/CM/nJ6tdIxFTtBLOxbIoTNoK0Tjn49rZgasLUM=": {   //Peer 2 public key
+            "allowed-ips": [
+              "10.16.1.51/32"
+            ],
+            "persistent-keepalive": 25
+          }
+        },
+        {
+          "wZ0j/CM/nJ6tdIxFTtBLOxbIoTNoK0Tjn49rZgasLUM=": {   //Peer 3 public key
+            "allowed-ips": [
+              "10.16.1.52/32"
+            ],
+            "persistent-keepalive": 25
+          }
+        },
+        {
+          "wZ0j/CM/nJ6tdIxFTtBLOxbIoTNoK0Tjn49rZgasLUM=": {   //Peer 4 public key
+            "allowed-ips": [
+              "10.16.1.53/32"
+            ],
+            "persistent-keepalive": 25
+          }
+        },
+        {
+          "wZ0j/CM/nJ6tdIxFTtBLOxbIoTNoK0Tjn49rZgasLUM=": {  //Peer 5 public key
+            "allowed-ips": [
+              "10.16.1.54/32"
+            ],
+            "persistent-keepalive": 25
+          }
+        }],
+        "private-key": "/config/auth/wireguard/wg_private.key",  //Server key
+        "route-allowed-ips": "true"
+      }
+    }
+  }
+}
+```
+---
