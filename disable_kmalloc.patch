@@ -1,12 +1,3 @@
-From 00a970f9ce4a97e8f46f24c90c0242a658143457 Mon Sep 17 00:00:00 2001
-From: Nils Andreas Svee <me@lochnair.net>
-Date: Sun, 3 Mar 2019 23:44:16 +0100
-Subject: [PATCH] Only use __vmalloc for now
-
----
- src/compat/compat.h | 10 ----------
- 1 file changed, 10 deletions(-)
-
 diff --git a/src/compat/compat.h b/src/compat/compat.h
 index 7a61e4c..f2b3d5e 100644
 --- a/src/compat/compat.h
@@ -28,6 +19,3 @@ index 7a61e4c..f2b3d5e 100644
  	return __vmalloc(size, flags, PAGE_KERNEL);
  }
  static inline void *kvzalloc_ours(size_t size, gfp_t flags)
--- 
-2.21.0
-

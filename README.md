@@ -1,7 +1,7 @@
 WireGuard for Ubiquiti
 ======================
 
-This repository contains the vyatta configuration files to integrate WireGuard with Ubiquiti Networks devices.
+This repository contains Vyatta configuration files to integrate WireGuard with Ubiquiti Networks devices.
 
 Please see below for instructions on how to install the prebuilt deb packages listed under [releases](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases).
 
@@ -14,7 +14,6 @@ Table of Contents
 * [Usage](#usage)
 * [Routing](#routing)
 * [Binaries](#binaries)
-* [Build from scratch](#build-from-scratch)
 
 ---
 
@@ -24,7 +23,7 @@ Installation
 Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases) for your model and then install it via:
 
 ```bash
-sudo dpkg -i wireguard.deb
+sudo dpkg -i wireguard-${BOARD}-${RELEASE}.deb
 ```
 
 After you will have be able to create a `wireguard` interface (`show interfaces`).
@@ -88,9 +87,7 @@ sudo dpkg --remove wireguard
 Usage
 -----
 
-You can learn about how to actually use WireGuard on [WireGuard.com](https://www.wireguard.com/).  All of the concepts are explained in depth..
-
-Here is a simple example of a configuration for vyatta/EdgeOS:
+Read the documentation on [WireGuard.com](https://www.wireguard.com/) for general WireGuard concepts. Here is a simple example of a configuration for Vyatta/EdgeOS:
 
 ```bash
 wg genkey | tee /config/auth/wg.key | wg pubkey >  wg.public
@@ -120,9 +117,7 @@ save
 exit
 ```
 
-The `private-key` and `preshared-key` fields can take the key value or a file path.
-
-So if  you prefer not to put the keys in the config file, then the `private-key` and `preshared-key` field can alternatively take a file path on the filesystem, such as `/config/auth/`.
+The `private-key` and `preshared-key` fields can take the key value or a file path. So if you prefer not to put the keys in the config file, then the `private-key` and `preshared-key` field can alternatively take a file path on the filesystem, such as `/config/auth/key`.
 
 ---
 
@@ -138,11 +133,6 @@ If you are going to utilize a dynamic routing protocol over wireguard interfaces
 Binaries
 --------
 
-Prebuild binaries are available under [releases](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases)
+Prebuilt binaries are available under [releases](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases).
 
 The binaries are statically linked against [musl libc](https://www.musl-libc.org/) to mitigate potential issues with Ubiquiti EdgeOS's outdated glibc.
-
-Building from scratch
----------------------
-
-There is currently no build script available. Please use the CI files as a reference for now.
