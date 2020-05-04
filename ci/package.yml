@@ -3,14 +3,15 @@
   stage: package
   script:
     - apt update
-    - apt install -y gawk kmod
-    - export KERNEL=$(modinfo -F vermagic module/src/wireguard.ko | awk '{print $1;}')
+    - apt install -y kmod
+    - export KERNEL=$(modinfo -F vermagic module/src/wireguard.ko | cut -d ' ' -f 1)
     - mkdir -p pkg/usr/bin pkg/lib/modules/$KERNEL/kernel/net
     - cp -r debian pkg/DEBIAN
     - cp -r opt pkg/opt
     - cp module/src/wireguard.ko pkg/lib/modules/$KERNEL/kernel/net/wireguard.ko
     - cp tools/src/wg pkg/usr/bin/wg
-    - sed -i "s/WIREGUARD_VER/$MODULE_VERSION/g" pkg/DEBIAN/control
+    - sed -i "s/PACKAGE_VERSION/$MODULE_VERSION/g" pkg/DEBIAN/control
+    - sed -i "s/PACKAGE_RELEASE/$PACKAGE_RELEASE/g" pkg/DEBIAN/control
     - sed -i "s/KERNEL_VER/$KERNEL/g" pkg/DEBIAN/preinst
     - sed -i "s/PACAKGE_ARCH/$ARCH/g" pkg/DEBIAN/control
     - dpkg-deb -b -Z gzip pkg

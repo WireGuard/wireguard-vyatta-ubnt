@@ -1,6 +1,6 @@
 Package: wireguard
 Source: wireguard
-Version: WIREGUARD_VER-1
+Version: PACKAGE_VERSION-PACKAGE_RELEASE
 Architecture: PACKAGE_ARCH
 Maintainer: Jason A. Donenfeld <Jason@zx2c4.com>
 Section: net

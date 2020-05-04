@@ -14,6 +14,7 @@ variables:
   UGWXG_SRC: "https://dl.ui.com/unifi/firmware/UGWXG/4.4.50.5272479/GPL.UGWXG.v4.4.50.5272479.tbz2"
   MODULE_VERSION: "1.0.20200429"
   TOOLS_VERSION: "1.0.20200319"
+  PACKAGE_RELEASE: "2"
 
 stages:
   - docker
