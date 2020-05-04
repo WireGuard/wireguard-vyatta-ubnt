@@ -12,6 +12,7 @@
     - cp tools/src/wg pkg/usr/bin/wg
     - sed -i "s/WIREGUARD_VER/$MODULE_VERSION/g" pkg/DEBIAN/control
     - sed -i "s/KERNEL_VER/$KERNEL/g" pkg/DEBIAN/preinst
+    - sed -i "s/PACAKGE_ARCH/$ARCH/g" pkg/DEBIAN/control
     - dpkg-deb -b -Z gzip pkg
     - mv pkg.deb $DEVICE-$SOFTWARE-v$MODULE_VERSION-v$TOOLS_VERSION.deb
   artifacts:
@@ -28,6 +29,7 @@ package:e50:v1:
   variables:
     DEVICE: e50
     SOFTWARE: v1
+    ARCH: mipsel
 
 package:e50:v2:
   extends: .package
@@ -39,6 +41,7 @@ package:e50:v2:
   variables:
     DEVICE: e50
     SOFTWARE: v2
+    ARCH: mipsel
 
 package:e100:v1:
   extends: .package
@@ -50,6 +53,7 @@ package:e100:v1:
   variables:
     DEVICE: e100
     SOFTWARE: v1
+    ARCH: mips
 
 package:e100:v2:
   extends: .package
@@ -61,6 +65,7 @@ package:e100:v2:
   variables:
     DEVICE: e100
     SOFTWARE: v2
+    ARCH: mips
 
 package:e200:v1:
   extends: .package
@@ -72,6 +77,7 @@ package:e200:v1:
   variables:
     DEVICE: e200
     SOFTWARE: v1
+    ARCH: mips
 
 package:e200:v2:
   extends: .package
@@ -83,6 +89,7 @@ package:e200:v2:
   variables:
     DEVICE: e200
     SOFTWARE: v2
+    ARCH: mips
 
 package:e300:v1:
   extends: .package
@@ -94,6 +101,7 @@ package:e300:v1:
   variables:
     DEVICE: e300
     SOFTWARE: v1
+    ARCH: mips
 
 package:e300:v2:
   extends: .package
@@ -105,6 +113,7 @@ package:e300:v2:
   variables:
     DEVICE: e300
     SOFTWARE: v2
+    ARCH: mips
 
 package:e1000:v1:
   extends: .package
@@ -116,6 +125,7 @@ package:e1000:v1:
   variables:
     DEVICE: e1000
     SOFTWARE: v1
+    ARCH: mips
 
 package:e1000:v2:
   extends: .package
@@ -127,6 +137,7 @@ package:e1000:v2:
   variables:
     DEVICE: e1000
     SOFTWARE: v2
+    ARCH: mips
 
 package:ugw3:
   extends: .package
@@ -138,6 +149,7 @@ package:ugw3:
   variables:
     DEVICE: ugw3
     SOFTWARE: v1
+    ARCH: mips
 
 package:ugw4:
   extends: .package
@@ -149,6 +161,7 @@ package:ugw4:
   variables:
     DEVICE: ugw4
     SOFTWARE: v1
+    ARCH: mips
 
 package:ugwxg:
   extends: .package
@@ -160,3 +173,4 @@ package:ugwxg:
   variables:
     DEVICE: ugwxg
     SOFTWARE: v1
+    ARCH: mips
