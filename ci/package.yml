@@ -12,7 +12,7 @@
     - cp tools/src/wg pkg/usr/bin/wg
     - sed -i "s/WIREGUARD_VER/$MODULE_VERSION/g" pkg/DEBIAN/control
     - sed -i "s/KERNEL_VER/$KERNEL/g" pkg/DEBIAN/preinst
-    - sed -i "s/PACAKGE_ARCH/$ARCH/g" pkg/DEBIAN/control
+    - sed -i "s/PACKAGE_ARCH/$ARCH/g" pkg/DEBIAN/control
     - dpkg-deb -b -Z gzip pkg
     - mv pkg.deb $DEVICE-$SOFTWARE-v$MODULE_VERSION-v$TOOLS_VERSION.deb
   artifacts:
