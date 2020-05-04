@@ -121,6 +121,13 @@ The `private-key` and `preshared-key` fields can take the key value or a file pa
 
 ---
 
+Surviving reboot
+----------------
+
+On the USG3/4 Pro the commandline setup above does not survive reboot/re-provisioning. The settings need to be added to a `config.gateway.json` file and placed on the *controller*. Depending on your particular setup, this file can be located in several locations. You can use the *commented* `config.gateway.json.example` file provided and follow the instructions in [Unifi - USG Advanced Configuration Using config.gateway.json](https://help.ui.com/hc/en-us/articles/215458888-UniFi-USG-Advanced-Configuration-Using-config-gateway-json) to create the file in the appropriate location.
+
+The firewall changes can be made in the UI, or added to the file.
+
 Routing
 -------
 
