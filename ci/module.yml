@@ -10,7 +10,6 @@ module:prepare:
     - gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-linux-compat-$MODULE_VERSION.tar.asc wireguard-linux-compat-$MODULE_VERSION.tar
     - tar -xf wireguard-linux-compat-$MODULE_VERSION.tar --one-top-level=module --strip-components=1
     - cd $CI_PROJECT_DIR/module
-    - patch -p1 -i $CI_PROJECT_DIR/disable_kmalloc.patch
     - sed -i 's/ --dirty//g' src/Makefile
   artifacts:
     paths:
