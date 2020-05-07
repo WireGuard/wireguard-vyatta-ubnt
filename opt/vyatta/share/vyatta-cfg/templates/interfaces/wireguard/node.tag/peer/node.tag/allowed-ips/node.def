@@ -7,7 +7,7 @@ delete:
        if [ "$VAR(../../route-allowed-ips/@)" == "true" ]; then
          ips="$VAR(@)"
          for ip in ${ips//,/ }; do
-           sudo ip route del "$ip" dev "$VAR(../../@)" 2> /dev/null
+           sudo ip route del "$ip" dev "$VAR(../../@)" 2> /dev/null || true
          done
        fi
 
