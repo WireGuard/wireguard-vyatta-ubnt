@@ -6,8 +6,15 @@ val_help: <x.x.x.x/x | h:h:h:h:h:h:h:h>[,x.x.x.x/x | h:h:h:h:h:h:h:h]...; Comma 
 delete:
        if [ "$VAR(../../route-allowed-ips/@)" == "true" ]; then
          ips="$VAR(@)"
-         for ip in ${ips//,/ }; do
-           sudo ip route del "$ip" dev "$VAR(../../@)" 2> /dev/null || true
+         for route in $(sudo ip route |awk '$3=="$VAR(../../@)" { print $1 } ')
+         do
+           for ip in ${ips//,/ };
+           do
+             if [[ $route = $ip ]];
+             then
+               sudo ip route del "$ip" dev "$VAR(../../@)" 2> /dev/null
+             fi
+           done
          done
        fi
 
