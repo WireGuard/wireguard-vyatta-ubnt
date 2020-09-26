@@ -1,0 +1,67 @@
+name: Build kernel module and tools
+
+on:
+  push:
+    branches:
+        - "master"
+  pull_request:
+    
+jobs:
+  headers:
+    container:
+      image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
+      env:
+        CROSS: ${{ matrix.toolchain }}
+      volumes:
+        headers:/headers
+
+    strategy:
+      matrix:
+        device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
+        version: [1, 2]
+        toolchain: [mips64-octeon-linux-]
+        image: ["octeon-kernel"]
+        exclude:
+          - device: ugw3
+            version: 2
+          - device: ugw4
+            version: 2
+          - device: ugwxg
+            version: 2
+        include:
+          - device: e50
+            version: 1
+            toolchain: mipsel-mtk-linux-
+            image: ["mtk-kernel"]
+          - device: e50
+            version: 2
+            toolchain: mipsel-linux-gnu-
+            image: ["mipsel-kernel"]
+    
+    steps:
+      - name: Build headers
+        run: |
+          mkdir /build
+          cd /build
+          curl -o ubnt-source.json https://raw.githubusercontent.com/${{ github.repository }}/master/ci/collect.yml
+          curl -o src.tar.bz2 $(jq '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ubnt-source.json)
+          tar -xf src.tar.bz2 --wildcards 'source/kernel_*' --strip-components 1
+          mv kernel_* kernel.tar.gz
+          tar -xf kernel.tar.gz --strip-components 1
+          if [ $VERSION -ne 1 ]; then make ARCH=mips ubnt_er_${DEVICE}_defconfig; fi;
+          make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS prepare modules_prepare
+          make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS vmlinux modules
+          cp Module.symvers .config /headers
+          make mrproper
+          make -j$(nproc) ARCH=mips O=/headers CROSS_COMPILE=$CROSS prepare modules_prepare scripts
+          rm /headers/source /headers/Makefile
+          # This is from alpine linux who in turn got it from
+          # http://kernel.ubuntu.com/git/ubuntu/ubuntu-zesty.git/tree/debian/rules.d/3-binary-indep.mk
+          find . -path './include/*' -prune -o -path './scripts/*' -prune -o -type f \( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o -name '*.sh' -o -name '*.pl' -o -name '*.lds' -o -name 'Platform' \) -print | cpio -pdm "/headers"
+          cp -a scripts include "/headers"
+          find $(find arch -name include -type d -print) -type f | cpio -pdm "/headers"
+      - name: Store headers in cache
+        uses: actions/cache@v2
+        with:
+          path: /headers
+          key: ${{ matrix.device }}-${{ matrix.version }}
