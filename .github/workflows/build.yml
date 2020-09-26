@@ -45,10 +45,10 @@ jobs:
             image: mipsel-kernel
     
     steps:
+      - uses: actions/checkout@v2
       - name: Build headers
         run: |
-          curl -o ubnt-source.json https://raw.githubusercontent.com/${{ github.repository }}/master/ci/ubnt-source.json
-          curl -o src.tar.bz2 $(jq -r '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ubnt-source.json)
+          curl -o src.tar.bz2 $(jq -r '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ci/ubnt-source.json)
           tar -xf src.tar.bz2 --wildcards 'source/kernel_*' --strip-components 1
           mv kernel_* kernel.tar.gz
           tar -xf kernel.tar.gz --strip-components 1
@@ -76,6 +76,7 @@ jobs:
       image: buildpack-deps:focal
     
     steps:
+      - uses: actions/checkout@v2
       - name: Download module source
         run: |
           curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
