@@ -21,7 +21,7 @@ jobs:
         device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
         version: [1, 2]
         toolchain: [mips64-octeon-linux-]
-        image: ["octeon-kernel"]
+        image: [octeon-kernel]
         exclude:
           - device: ugw3
             version: 2
@@ -33,11 +33,11 @@ jobs:
           - device: e50
             version: 1
             toolchain: mipsel-mtk-linux-
-            image: ["mtk-kernel"]
+            image: mtk-kernel
           - device: e50
             version: 2
             toolchain: mipsel-linux-gnu-
-            image: ["mipsel-kernel"]
+            image: mipsel-kernel
     
     steps:
       - name: Build headers
