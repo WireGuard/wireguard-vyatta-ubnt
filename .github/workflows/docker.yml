@@ -14,7 +14,7 @@ jobs:
         matrix:
           tag: [mips, mipsel, mtk, octeon]
           type: [kernel, tools]
-          excludes:
+          exclude:
             - tag: mips
               type: kernel
             - tag: mtk
