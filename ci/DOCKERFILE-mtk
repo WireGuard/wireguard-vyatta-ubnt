@@ -20,7 +20,8 @@ RUN apt-get update && \
 	libtool \
 	texinfo \
 	cpio \
-	wget && \
+	wget \
+	jq && \
 	rm -rf /var/lib/apt/lists/*
 
 ARG BINUTILS_VER=2.29.1
