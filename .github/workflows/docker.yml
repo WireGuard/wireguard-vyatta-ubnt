@@ -12,15 +12,15 @@ jobs:
 
     strategy:
         matrix:
-          tag: ["mips", "mipsel", "mtk", "octeon"]
-          type: ["kernel", "tools"]
+          tag: [mips, mipsel, mtk, octeon]
+          type: [kernel, tools]
           excludes:
-            - tag: "mips"
-              type: "kernel"
-            - tag: "mtk"
-              type: "tools"
-            - tag: "octeon"
-              type: "tools"
+            - tag: mips
+              type: kernel
+            - tag: mtk
+              type: tools
+            - tag: octeon
+              type: tools
     env:
       IMAGE: ghcr.io/${{ github.repository_owner }}/ubnt-build:${{ matrix.tag }}-${{ matrix.type }}
 
