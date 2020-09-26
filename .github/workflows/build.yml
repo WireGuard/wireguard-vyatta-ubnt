@@ -8,12 +8,13 @@ on:
     
 jobs:
   headers:
+    runs-on: ubuntu-20.04
     container:
       image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
       env:
         CROSS: ${{ matrix.toolchain }}
       volumes:
-        headers:/headers
+        - headers:/headers
 
     strategy:
       matrix:
