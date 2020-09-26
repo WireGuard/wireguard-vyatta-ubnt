@@ -5,6 +5,11 @@ on:
     branches:
         - "master"
   pull_request:
+
+env:
+  MODULE_VERSION: "1.0.20200908"
+  TOOLS_VERSION: "1.0.20200827"
+  PACKAGE_RELEASE: "1"
     
 jobs:
   headers:
@@ -42,8 +47,6 @@ jobs:
     steps:
       - name: Build headers
         run: |
-          mkdir /build
-          cd /build
           curl -o ubnt-source.json https://raw.githubusercontent.com/${{ github.repository }}/master/ci/ubnt-source.json
           curl -o src.tar.bz2 $(jq -r '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ubnt-source.json)
           tar -xf src.tar.bz2 --wildcards 'source/kernel_*' --strip-components 1
@@ -51,7 +54,7 @@ jobs:
           tar -xf kernel.tar.gz --strip-components 1
           if [ ${{ matrix.version }} -ne 1 ]; then make ARCH=mips ubnt_er_${{ matrix.device }}_defconfig; fi;
           make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS prepare modules_prepare
-          make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS vmlinux modules
+          make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS modules #vmlinux
           cp Module.symvers .config /headers
           make mrproper
           make -j$(nproc) ARCH=mips O=/headers CROSS_COMPILE=$CROSS prepare modules_prepare scripts
@@ -66,3 +69,24 @@ jobs:
         with:
           path: /headers
           key: ${{ matrix.device }}-${{ matrix.version }}
+  
+  module-prepare:
+    runs-on: ubuntu-20.04
+    container:
+      image: buildpack-deps:focal
+    
+    steps:
+      - name: Download module source
+        run: |
+          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
+          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.asc
+          unxz wireguard-linux-compat-$MODULE_VERSION.tar.xz
+          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-linux-compat-$MODULE_VERSION.tar.asc wireguard-linux-compat-$MODULE_VERSION.tar
+          tar -xf wireguard-linux-compat-$MODULE_VERSION.tar --one-top-level=module --strip-components=1
+          cd module
+          sed -i 's/ --dirty//g' src/Makefile
+      - name: Cache module source
+        uses: actions/cache@v2
+        with:
+          path: module
+          key: module
