@@ -1,0 +1,53 @@
+name: Docker build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # Module and header build environments
+  kernel:
+    runs-on: "ubuntu-20.04"
+    steps:
+
+      # MTK devices v2 kernel headers
+      - name: mipsel
+        uses: ./.github/actions/docker-template
+        env:
+          IMAGE: ":mipsel"
+          DOCKERFILE: DOCKERFILE-mipsel
+
+      # MTK devices v1 kernel headers and module build
+      - name: mtk
+        uses: ./.github/actions/docker-template
+        env:
+          IMAGE: ":mtk"
+          DOCKERFILE: DOCKERFILE-mtk
+
+      # Octeon devices kernel headers and module build
+      - name: octeon
+        uses: ./.github/actions/docker-template
+        env:
+          IMAGE: ":octeon"
+          DOCKERFILE: DOCKERFILE-octeon
+
+  # Tools build environments
+  tools:
+   runs-on: "ubuntu-20.04"
+   steps:
+    # Octeon tools environment
+    - name: mips
+      uses: ./.github/actions/docker-template
+      env:
+        IMAGE: "/tools:mips"
+        DOCKERFILE: DOCKERFILE-tools
+        ARCH: mips
+        TARGET: "mips-linux-musl"
+
+    # MTK tools environment
+    - name: mipsel
+      uses: ./.github/actions/docker-template
+      env:
+        IMAGE: "/tools:mipsel"
+        DOCKERFILE: DOCKERFILE-tools
+        ARCH: mipsel
+        TARGET: "mipsel-linux-musl"
