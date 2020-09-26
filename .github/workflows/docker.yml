@@ -12,40 +12,35 @@ jobs:
 
     strategy:
         matrix:
-          image: ["/tools:mips", "/tools:mipsel", ":mipsel", ":mtk", ":octeon"]
-          includes:
-            - image: "/tools:mips"
-              dockerfile: "DOCKERFILE-tools"
-              arch: "mips"
-              target: "mips-linux-musl"
-            - image: "/tools:mipsel"
-              dockerfile: "DOCKERFILE-tools"
-              arch: "mipsel"
-              target: "mipsel-linux-musl"
-            - image: ":mipsel"
-              dockerfile: "DOCKERFILE-mipsel"
-            - image: ":mtk"
-              dockerfile: "DOCKERFILE-mtk"
-            - image: ":octeon"
-              dockerfile: "DOCKERFILE-octeon"
+          tag: ["mips", "mipsel", "mtk", "octeon"]
+          type: ["kernel", "tools"]
+          excludes:
+            - tag: "mips"
+              type: "kernel"
+            - tag: "mtk"
+              type: "tools"
+            - tag: "octeon"
+              type: "tools"
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/ubnt-build:${{ matrix.tag }}-${{ matrix.type }}
 
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Define registry
-        run: export REGISTRY=$(echo "ghcr.io/${{ github.repository_owner }}" | tr '[A-Z]' '[a-z]')
 
-      - name: Build image
+      - name: Build kernel environment
+        if: ${{ matrix.type == "kernel" }}
+        run: docker build --pull -t "$IMAGE" -f ci/DOCKERFILE-${{ matrix.tag }} .
+      
+      - name: Build tools environment
+        if: ${{ matrix.type == "tools" }}
         env:
-          IMAGE: ${{ matrix.image }}
-          DOCKERFILE: ${{ matrix.dockerfile }}
-          ARCH: ${{ matrix.arch }}
-          TARGET: ${{ matrix.target }}
-        run: docker build --pull -t "$REGISTRY$IMAGE" -f ci/$DOCKERFILE .
+          ARCH: ${{ matrix.tag }}
+          TARGET: ${{ matrix.tag }}-linux-musl
+        run: docker build --pull -t "$IMAGE" -f ci/DOCKERFILE-tools .
 
       - name: Log into GitHub Container Registry
       # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
         run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push image to GitHub Container Registry
-        run: docker push "$REGISTRY$IMAGE"
+        run: docker push "$IMAGE"
