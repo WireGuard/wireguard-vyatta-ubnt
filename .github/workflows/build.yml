@@ -49,7 +49,7 @@ jobs:
           tar -xf src.tar.bz2 --wildcards 'source/kernel_*' --strip-components 1
           mv kernel_* kernel.tar.gz
           tar -xf kernel.tar.gz --strip-components 1
-          if [ ${{ matrix.version }} -ne 1 ]; then make ARCH=mips ubnt_er_${DEVICE}_defconfig; fi;
+          if [ ${{ matrix.version }} -ne 1 ]; then make ARCH=mips ubnt_er_${{ matrix.device }}_defconfig; fi;
           make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS prepare modules_prepare
           make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS vmlinux modules
           cp Module.symvers .config /headers
