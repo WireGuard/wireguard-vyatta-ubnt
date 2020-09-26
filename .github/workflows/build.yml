@@ -45,7 +45,7 @@ jobs:
           mkdir /build
           cd /build
           curl -o ubnt-source.json https://raw.githubusercontent.com/${{ github.repository }}/master/ci/ubnt-source.json
-          curl -o src.tar.bz2 $(jq '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ubnt-source.json)
+          curl -o src.tar.bz2 $(jq -r '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ubnt-source.json)
           tar -xf src.tar.bz2 --wildcards 'source/kernel_*' --strip-components 1
           mv kernel_* kernel.tar.gz
           tar -xf kernel.tar.gz --strip-components 1
