@@ -140,7 +140,7 @@ jobs:
       - name: Upload built module
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.device }}-${{ matrix.version }}
+          name: module-${{ matrix.device }}-${{ matrix.version }}
           path: module/src/wireguard.ko
   
   tools:
@@ -177,5 +177,60 @@ jobs:
       - name: Upload built tools
         uses: actions/upload-artifact@v2
         with:
-          name: wg-${{ matrix.arch }}
+          name: tools-${{ matrix.arch }}
           path: tools/src/wg
+
+  package:
+    runs-on: ubuntu-20.04
+    container:
+      image: debian
+    
+    strategy:
+      matrix:
+        device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
+        version: [1, 2]
+        arch: [mips]
+        exclude:
+          - device: ugw3
+            version: 2
+          - device: ugw4
+            version: 2
+          - device: ugwxg
+            version: 2
+        include:
+          - device: e50
+            version: 1
+            arch: mipsel
+          - device: e50
+            version: 2
+            arch: mipsel
+    steps:
+      - name: Download module
+        uses: actions/download-artifact@v2
+        with:
+          name: module-${{ matrix.device }}-${{ matrix.version }}
+      - name: Download tools
+        uses: actions/download-artifact@v2
+        with:
+          name: tools-${{ matrix.arch }}
+      - name: Build package
+        run: |
+          apt update
+          apt install -y kmod
+          export KERNEL=$(modinfo -F vermagic module/src/wireguard.ko | cut -d ' ' -f 1)
+          mkdir -p pkg/usr/bin pkg/lib/modules/$KERNEL/kernel/net
+          cp -r debian pkg/DEBIAN
+          cp -r opt pkg/opt
+          cp module/src/wireguard.ko pkg/lib/modules/$KERNEL/kernel/net/wireguard.ko
+          cp tools/src/wg pkg/usr/bin/wg
+          sed -i "s/PACKAGE_VERSION/$MODULE_VERSION/g" pkg/DEBIAN/control
+          sed -i "s/PACKAGE_RELEASE/$PACKAGE_RELEASE/g" pkg/DEBIAN/control
+          sed -i "s/KERNEL_VER/$KERNEL/g" pkg/DEBIAN/preinst
+          sed -i "s/PACKAGE_ARCH/${{ matrix.arch }}/g" pkg/DEBIAN/control
+          dpkg-deb -b -Z gzip pkg
+          mv pkg.deb ${{ matrix.device }}-v${{ matrix.version }}-v$MODULE_VERSION-v$TOOLS_VERSION.deb
+      - name: Upload package
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.device }}-v${{ matrix.version }}
+          path: ${{ matrix.device }}-v${{ matrix.version }}-v${{ env.MODULE_VERSION }}-v${{ env.TOOLS_VERSION }}.deb
