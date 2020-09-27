@@ -46,6 +46,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build headers
         run: |
+          mkdir /headers
           curl -o src.tar.bz2 $(jq -r '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ci/ubnt-source.json)
           tar -xf src.tar.bz2 --wildcards 'source/kernel_*' --strip-components 1
           mv kernel_* kernel.tar.gz
