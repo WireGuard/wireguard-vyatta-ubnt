@@ -91,6 +91,7 @@ jobs:
           path: module
 
   module:
+    needs: [module-prepare, headers]
     runs-on: ubuntu-20.04
     container:
       image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
