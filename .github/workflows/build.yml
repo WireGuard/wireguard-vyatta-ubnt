@@ -223,8 +223,8 @@ jobs:
           mkdir -p pkg/usr/bin pkg/lib/modules/$KERNEL/kernel/net
           cp -r debian pkg/DEBIAN
           cp -r opt pkg/opt
-          cp module/src/wireguard.ko pkg/lib/modules/$KERNEL/kernel/net/wireguard.ko
-          cp tools/src/wg pkg/usr/bin/wg
+          cp wireguard.ko pkg/lib/modules/$KERNEL/kernel/net/wireguard.ko
+          cp wg pkg/usr/bin/wg
           sed -i "s/PACKAGE_VERSION/$MODULE_VERSION/g" pkg/DEBIAN/control
           sed -i "s/PACKAGE_RELEASE/$PACKAGE_RELEASE/g" pkg/DEBIAN/control
           sed -i "s/KERNEL_VER/$KERNEL/g" pkg/DEBIAN/preinst
