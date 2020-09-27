@@ -129,7 +129,7 @@ jobs:
       - name: Restore headers
         uses: actions/download-artifact@v2
         with:
-          name: headers
+          name: headers-${{ matrix.device }}-${{ matrix.version }}
       - name: Build module
         run: |
           tar -xf headers.tar
