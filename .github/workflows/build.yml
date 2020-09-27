@@ -126,6 +126,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: module-src
+          path: module
       - name: Restore headers
         uses: actions/download-artifact@v2
         with:
