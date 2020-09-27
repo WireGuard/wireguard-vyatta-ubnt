@@ -206,6 +206,7 @@ jobs:
             version: 2
             arch: mipsel
     steps:
+      - uses: actions/checkout@v2
       - name: Download module
         uses: actions/download-artifact@v2
         with:
