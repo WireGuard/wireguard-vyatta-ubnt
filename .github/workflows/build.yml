@@ -154,6 +154,7 @@ jobs:
             target: mipsel-linux-musl
             image: lochnair/musl-buildenv:mipsel # Will be: mipsel-tools
     steps:
+      - uses: actions/checkout@v2
       - name: Build tools
         env:
           TARGET: ${{ matrix.target }}
