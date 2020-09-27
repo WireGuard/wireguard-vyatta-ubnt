@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: headers
-          path: headers.tar.gz
+          path: headers.tar
   
   module-prepare:
     runs-on: ubuntu-20.04
@@ -89,7 +89,7 @@ jobs:
       - name: Upload module source
         uses: actions/upload-artifact@v2
         with:
-          name: module
+          name: module-src
           path: module
 
   module:
