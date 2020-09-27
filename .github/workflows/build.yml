@@ -18,8 +18,6 @@ jobs:
       image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
       env:
         CROSS: ${{ matrix.toolchain }}
-      volumes:
-        - headers:/headers
 
     strategy:
       matrix:
@@ -64,11 +62,11 @@ jobs:
           find . -path './include/*' -prune -o -path './scripts/*' -prune -o -type f \( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o -name '*.sh' -o -name '*.pl' -o -name '*.lds' -o -name 'Platform' \) -print | cpio -pdm "/headers"
           cp -a scripts include "/headers"
           find $(find arch -name include -type d -print) -type f | cpio -pdm "/headers"
-      - name: Store headers in cache
-        uses: actions/cache@v2
+      - name: Store headers
+        uses: actions/upload-artifact@v2
         with:
+          name: headers
           path: /headers
-          key: ${{ matrix.device }}-${{ matrix.version }}
   
   module-prepare:
     runs-on: ubuntu-20.04
@@ -86,8 +84,92 @@ jobs:
           tar -xf wireguard-linux-compat-$MODULE_VERSION.tar --one-top-level=module --strip-components=1
           cd module
           sed -i 's/ --dirty//g' src/Makefile
-      - name: Cache module source
-        uses: actions/cache@v2
+      - name: Upload module source
+        uses: actions/upload-artifact@v2
         with:
+          name: module
           path: module
-          key: module
+
+  module:
+    runs-on: ubuntu-20.04
+    container:
+      image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
+
+    strategy:
+      matrix:
+        device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
+        version: [1, 2]
+        toolchain: [mips64-octeon-linux-]
+        image: [octeon-kernel]
+        exclude:
+          - device: ugw3
+            version: 2
+          - device: ugw4
+            version: 2
+          - device: ugwxg
+            version: 2
+        include:
+          - device: e50
+            version: 1
+            toolchain: mipsel-mtk-linux-
+            image: mtk-kernel
+          - device: e50
+            version: 2
+            toolchain: mipsel-mtk-linux-
+            image: mtk-kernel
+
+    steps:
+      - name: Restore module source
+        uses: actions/download-artifact@v2
+        with:
+          name: module-src
+      - name: Restore headers
+        uses: actions/download-artifact@v2
+        with:
+          name: headers
+      - name: Build module
+        run: |
+          cd module/src
+          make -j$(nproc) ARCH=mips CROSS_COMPILE=${{ matrix.toolchain }} KERNELDIR=headers module
+          ${{ matrix.toolchain }}strip --strip-debug wireguard.ko
+      - name: Upload built module
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.device }}-${{ matrix.version }}
+          path: module/src/wireguard.ko
+  
+  tools:
+    runs-on: ubuntu-20.04
+    container:
+      image: ${{ matrix.image }}
+
+    strategy:
+      matrix:
+        include:
+          - arch: mips
+            target: mips-linux-musl
+            image: lochnair/musl-buildenv:mips # Will be: mips-tools
+          - arch: mipsel
+            target: mipsel-linux-musl
+            image: lochnair/musl-buildenv:mipsel # Will be: mipsel-tools
+    steps:
+      - name: Build tools
+        env:
+          TARGET: ${{ matrix.target }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          apk add gnupg
+          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.xz https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.xz
+          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.asc https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.asc
+          unxz wireguard-tools-$TOOLS_VERSION.tar.xz
+          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-tools-$TOOLS_VERSION.tar.asc wireguard-tools-$TOOLS_VERSION.tar
+          tar -xf wireguard-tools-$TOOLS_VERSION.tar
+          mv wireguard-tools-$TOOLS_VERSION tools
+          cd tools/src
+          CC="$ARCH-linux-musl-gcc" LDLIBS="-static" make -j$(nproc)
+          $ARCH-linux-musl-strip --strip-unneeded wg
+      - name: Upload built tools
+        uses: actions/upload-artifact@v2
+        with:
+          name: wg-${{ matrix.arch }}
+          path: tools/src/wg
