@@ -181,6 +181,7 @@ jobs:
           path: tools/src/wg
 
   package:
+    needs: [module, tools]
     runs-on: ubuntu-20.04
     container:
       image: debian
