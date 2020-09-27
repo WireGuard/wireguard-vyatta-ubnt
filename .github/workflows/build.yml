@@ -63,11 +63,12 @@ jobs:
           find . -path './include/*' -prune -o -path './scripts/*' -prune -o -type f \( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o -name '*.sh' -o -name '*.pl' -o -name '*.lds' -o -name 'Platform' \) -print | cpio -pdm "/headers"
           cp -a scripts include "/headers"
           find $(find arch -name include -type d -print) -type f | cpio -pdm "/headers"
+          tar -cf headers.tar /headers/
       - name: Store headers
         uses: actions/upload-artifact@v2
         with:
           name: headers
-          path: /headers
+          path: headers.tar.gz
   
   module-prepare:
     runs-on: ubuntu-20.04
@@ -131,6 +132,7 @@ jobs:
           name: headers
       - name: Build module
         run: |
+          tar -xf headers.tar
           cd module/src
           make -j$(nproc) ARCH=mips CROSS_COMPILE=${{ matrix.toolchain }} KERNELDIR=headers module
           ${{ matrix.toolchain }}strip --strip-debug wireguard.ko
