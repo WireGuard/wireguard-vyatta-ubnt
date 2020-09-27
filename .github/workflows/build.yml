@@ -67,7 +67,7 @@ jobs:
       - name: Store headers
         uses: actions/upload-artifact@v2
         with:
-          name: headers
+          name: headers-${{ matrix.device }}-${{ matrix.version }}
           path: headers.tar
   
   module-prepare:
