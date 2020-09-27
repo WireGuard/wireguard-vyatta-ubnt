@@ -135,7 +135,7 @@ jobs:
         run: |
           tar -xf headers.tar
           cd module/src
-          make -j$(nproc) ARCH=mips CROSS_COMPILE=${{ matrix.toolchain }} KERNELDIR=headers module
+          make -j$(nproc) ARCH=mips CROSS_COMPILE=${{ matrix.toolchain }} KERNELDIR=$GITHUB_WORKSPACE/headers module
           ${{ matrix.toolchain }}strip --strip-debug wireguard.ko
       - name: Upload built module
         uses: actions/upload-artifact@v2
