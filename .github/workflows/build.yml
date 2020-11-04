@@ -242,7 +242,6 @@ jobs:
 
   release:
     runs-on: ubuntu-20.04
-    if: ${{ startsWith(github.ref, "/refs/tags/") }}
     needs: package
 
     steps:
