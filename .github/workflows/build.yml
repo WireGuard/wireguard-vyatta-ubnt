@@ -245,6 +245,7 @@ jobs:
     needs: package
 
     steps:
+      - uses: actions/checkout@v2
       - name: Create Release
         id: create_release
         uses: fossoreslp/release-artifacts@v1
