@@ -237,7 +237,7 @@ jobs:
       - name: Upload package
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.device }}-v${{ matrix.version }}
+          name: release_${{ matrix.device }}-v${{ matrix.version }}
           path: ${{ matrix.device }}-v${{ matrix.version }}-v${{ env.MODULE_VERSION }}-v${{ env.TOOLS_VERSION }}.deb
 
   release:
@@ -248,8 +248,8 @@ jobs:
       - name: Create Release
         id: create_release
         uses: fossoreslp/release-artifacts@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           title: Wireguard ${{ env.MODULE_VERSION }} ${{ env.TOOLS_VERSION }}
           template: release_body.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+          variables: ${{ toJSON(env) }}
