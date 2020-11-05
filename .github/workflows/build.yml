@@ -251,6 +251,6 @@ jobs:
         uses: fossoreslp/release-artifacts@v1
         with:
           title: Wireguard ${{ env.MODULE_VERSION }} ${{ env.TOOLS_VERSION }}
-          template: release_body.md
+          template: ci/release_body.md
           token: ${{ secrets.GITHUB_TOKEN }}
           variables: ${{ toJSON(env) }}
