@@ -88,11 +88,6 @@ function cfg_preshared-key() {
     fi
 }
 
-###### DEBUG ######
-echo -e "script: $(basename "$0")\nparam1: '${1:-}'\nparam2: '${2:-}'\nparam3: '${3:-}'\nparam4: '${4:-}'\nparam5: '${5:-}'"
-set -x
-###### DEBUG ######
-
 ## Peer option configuration
 # If more than three parameters are passed to this script
 if [ $# -gt 3 ]; then

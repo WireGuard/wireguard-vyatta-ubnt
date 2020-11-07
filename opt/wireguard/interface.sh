@@ -87,11 +87,6 @@ function cfg_route-allowed-ips {
     /opt/wireguard/update_routes.sh $INTERFACE
 }
 
-###### DEBUG ######
-echo -e "script: $(basename "$0")\nparam1: '${1:-}'\nparam2: '${2:-}'\nparam3: '${3:-}'\nparam4: '${4:-}'"
-set -x
-###### DEBUG ######
-
 ## Interface option configuration
 # If more than two parameters are passed to this script
 if [ $# -gt 2 ]; then
