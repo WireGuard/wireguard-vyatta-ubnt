@@ -9,6 +9,6 @@ syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
 commit:expression: exec "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../@)"
 
-create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../@) $VAR(@)
+create: /opt/wireguard/interface.sh "$COMMIT_ACTION" "$VAR(../@)" "address" "$VAR(@)"
 
-delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../@) $VAR(@)
+delete: /opt/wireguard/interface.sh "$COMMIT_ACTION" "$VAR(../@)" "address" "$VAR(@)"

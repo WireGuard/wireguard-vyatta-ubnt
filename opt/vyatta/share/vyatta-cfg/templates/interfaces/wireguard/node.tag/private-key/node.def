@@ -1,22 +1,11 @@
+priority: 460
 type: txt
 help: Private key
 val_help: txt; 44-character (32-bytes) base64 key
 val_help: txt; File in /config/auth
 
-syntax:expression: exec "if [[ !(\"$VAR(@)\" =~ ^[0-9a-zA-Z/+]{43}=$) ]]; then exec ${vyatta_sbindir}/check_file_in_config_dir $VAR(@) '/config/auth'; fi"
+syntax:expression: exec "/opt/wireguard/is_valid_key.sh $VAR(@)"
 
-create:
-        if [[ "$VAR(@)" =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then
-            echo $VAR(@) | sudo wg set $VAR(../@) private-key /proc/self/fd/0
-        else
-            sudo wg set $VAR(../@) private-key $VAR(@)
-        fi
+end: /opt/wireguard/interface.sh "$COMMIT_ACTION" "$VAR(../@)" "private-key"
 
-update:
-        if [[ "$VAR(@)" =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then
-            echo $VAR(@) | sudo wg set $VAR(../@) private-key /proc/self/fd/0
-        else
-            sudo wg set $VAR(../@) private-key $VAR(@)
-        fi
-
-commit:expression: exec "if [[ !(\"$VAR(@)\" =~ ^[0-9a-zA-Z/+]{43}=$) ]]; then [[ -e $VAR(@) ]] || exit 1; fi" ; "Error: Private key $VAR(@) not found"
+commit:expression: exec "/opt/wireguard/is_valid_key.sh $VAR(@)"; "Error: Private key $VAR(@) not found"

@@ -13,11 +13,4 @@ syntax:expression: exec " \
 
 default: 1420
 
-update:
-    if [ -d /sys/class/net/$VAR(../@) ] ; then
-        ip link set $VAR(../@) mtu $VAR(@)
-    fi
-delete:
-    if [ -d /sys/class/net/$VAR(../@) ] ; then
-        ip link set $VAR(../@) mtu 1420
-    fi
+end: /opt/wireguard/interface.sh "$COMMIT_ACTION" "$VAR(../@)" "mtu"

@@ -3,6 +3,8 @@ help: Optional preshared key
 val_help: txt; 44-character (32-bytes) base64 key
 val_help: txt; File in /config/auth
 
-syntax:expression: exec "if [[ !(\"$VAR(@)\" =~ ^[0-9a-zA-Z/+]{43}=$) ]]; then exec ${vyatta_sbindir}/check_file_in_config_dir $VAR(@) '/config/auth'; fi"
+syntax:expression: exec "/opt/wireguard/is_valid_key.sh $VAR(@)"
 
-commit:expression: exec "if [[ !(\"$VAR(@)\" =~ ^[0-9a-zA-Z/+]{43}=$) ]]; then [[ -e $VAR(@) ]] || exit 1; fi" ; "Error: Preshared-key $VAR(@) not found"
+commit:expression: exec "/opt/wireguard/is_valid_key.sh $VAR(@)"; "Error: Preshared-key $VAR(@) not found"
+
+end: /opt/wireguard/peer.sh "$COMMIT_ACTION" "$VAR(../../@)" "$VAR(../@)" "preshared-key"

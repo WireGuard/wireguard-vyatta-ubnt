@@ -5,9 +5,4 @@ val_help: hex_value/hex_mask; Mark for outgoing packets with mask
 syntax:expression: pattern $VAR(@) "^[^!]*$" ; "Modify mark can not be inverted with '!'"
 syntax:expression: exec "/usr/sbin/ubnt-fw-syntax valid-mark \"$VAR(@)\""
 
-create:
-	sudo wg set $VAR(../@) fwmark $VAR(@)
-delete:
-	sudo wg set $VAR(../@) fwmark 0
-update:
-	sudo wg set $VAR(../@) fwmark $VAR(@)
+end: /opt/wireguard/interface.sh "$COMMIT_ACTION" "$VAR(../@)" "fwmark"

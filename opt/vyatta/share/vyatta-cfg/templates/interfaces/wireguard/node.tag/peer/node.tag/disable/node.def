@@ -1,6 +1,3 @@
 help: Disable peer
 
-delete:
-       if [ -n "$VAR(../endpoint)" ]; then
-         sudo wg set $VAR(../../@) peer $VAR(../@) endpoint "$VAR(../endpoint/@)"
-       fi
+end:  /opt/wireguard/peer.sh "$COMMIT_ACTION" "$VAR(../../@)" "$VAR(../@)" "disable"
