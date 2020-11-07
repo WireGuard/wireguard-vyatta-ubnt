@@ -1,4 +1,5 @@
 tag:
+priority: 460
 type: txt
 help: Peer public key
 
@@ -9,35 +10,6 @@ syntax:expression: pattern $VAR(@) "^[0-9a-zA-Z\+/]{43}=$" ;
 
 commit:expression: exec "${vyatta_sbindir}/vyatta-check-allowed-ips.pl --intf $VAR(../@) --peer $VAR(@)"
 
-end:
-        if [ "$COMMIT_ACTION" = DELETE ] || [ -n "$VAR(./disable)" ]; then
-          if [[ $(sudo wg show "$VAR(../@)" peers) == *"$VAR(@)"* ]]; then
-            if [ "$VAR(../route-allowed-ips/@)" == "true" ]; then
-              for allowed_ip in $(sudo wg show $VAR(../@) allowed-ips | awk '$1=="$VAR(@)" {$1=""; print $0}'); do
-                sudo ip route del "$allowed_ip" dev $VAR(../@) 2> /dev/null
-              done
-            fi
-            sudo wg set $VAR(../@) peer "$VAR(@)" remove
-          fi
-        else
-          sudo wg set $VAR(../@) peer $VAR(@)
+create: /opt/wireguard/peer.sh "$COMMIT_ACTION" "$VAR(../@)" "$VAR(@)"
 
-          ALLOWED=$(echo "$VAR(./allowed-ips/@)" | tr ' ' ',' | tr -d "'")
-          sudo wg set $VAR(../@) peer $VAR(@) allowed-ips "$ALLOWED"
-
-          if [ -n "$VAR(./persistent-keepalive)" ]; then
-            sudo wg set $VAR(../@) peer $VAR(@) persistent-keepalive $VAR(./persistent-keepalive/@)
-          else
-            sudo wg set $VAR(../@) peer $VAR(@) persistent-keepalive 0
-          fi
-
-          if [ -n "$VAR(./preshared-key)" ]; then
-            if [[ "$VAR(./preshared-key/@)" =~ ^[0-9a-zA-Z/+]{43}=$ ]]; then
-              echo $VAR(./preshared-key/@) | sudo wg set $VAR(../@) peer $VAR(@) preshared-key /proc/self/fd/0
-            else
-              sudo wg set $VAR(../@) peer $VAR(@) preshared-key $VAR(./preshared-key/@)
-            fi
-          else
-            sudo wg set $VAR(../@) peer $VAR(@) preshared-key /dev/null
-          fi
-        fi
+delete: /opt/wireguard/peer.sh "$COMMIT_ACTION" "$VAR(../@)" "$VAR(@)"
