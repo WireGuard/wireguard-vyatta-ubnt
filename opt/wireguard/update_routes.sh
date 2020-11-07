@@ -17,11 +17,6 @@ alias node_list='$VYATTA_API listNodes $VYATTA_API_SLUG'
 alias node_value='$VYATTA_API returnValue $VYATTA_API_SLUG'
 alias node_values='$VYATTA_API returnValues $VYATTA_API_SLUG'
 
-###### DEBUG ######
-echo -e "script: $(basename "$0")\nparam1: '${1:-}'"
-set -x
-###### DEBUG ######
-
 # Create variable for ip route shorthand
 ROUTE_SLUG="dev $INTERFACE scope link"
 # Create array of all routes for interface
