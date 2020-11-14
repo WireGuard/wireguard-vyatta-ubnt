@@ -222,7 +222,7 @@ jobs:
         run: |
           apt update
           apt install -y kmod
-          export KERNEL=$(modinfo -F vermagic module/src/wireguard.ko | cut -d ' ' -f 1)
+          export KERNEL=$(modinfo -F vermagic wireguard.ko | cut -d ' ' -f 1)
           mkdir -p pkg/usr/bin pkg/lib/modules/$KERNEL/kernel/net
           cp -r debian pkg/DEBIAN
           cp -r opt pkg/opt
