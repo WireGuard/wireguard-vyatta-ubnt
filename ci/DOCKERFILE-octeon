@@ -20,7 +20,8 @@ RUN apt-get update && \
 	libtool \
 	texinfo \
 	cpio \
-	wget && \
+	wget \
+	jq && \
 	rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/opt/cross/bin:${PATH}"

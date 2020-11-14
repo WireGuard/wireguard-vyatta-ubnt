@@ -12,7 +12,8 @@ RUN dpkg --add-architecture mipsel && \
 	bc \
 	bison \
 	flex \
-	cpio && \
+	cpio \
+	jq && \
 	rm -rf /var/lib/apt/lists/*
 
 ENV CROSSCOMPILE="mipsel-linux-gnu-"

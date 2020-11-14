@@ -2,29 +2,30 @@ FROM alpine:3.11
 
 # Install build dependencies
 RUN apk add --no-cache \
-        --update-cache \
-        autoconf \
-        automake \
-        bc \
-        bison \
-        build-base \
-        coreutils \
-        curl \
-        file \
-        flex \
-        gawk \
-        git \
-        gmp-dev \
-        libtool \
-        linux-headers \
-        mpc1-dev \
-        mpfr-dev \
-        shadow \
-        su-exec \
-        texinfo \
-        wget \
-        kmod \
-        gnupg
+	--update-cache \
+	autoconf \
+	automake \
+	bc \
+	bison \
+	build-base \
+	coreutils \
+	curl \
+	file \
+	flex \
+	gawk \
+	git \
+	gmp-dev \
+	libtool \
+	linux-headers \
+	mpc1-dev \
+	mpfr-dev \
+	shadow \
+	su-exec \
+	texinfo \
+	wget \
+	kmod \
+	gnupg \
+	jq
 
 
 # Let any user elevate to root
