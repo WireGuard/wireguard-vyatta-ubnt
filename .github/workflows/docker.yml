@@ -30,7 +30,7 @@ jobs:
       - name: Build kernel environment
         if: ${{ matrix.type == 'kernel' }}
         run: docker build --pull -t "$(echo $IMAGE | tr '[:upper:]' '[:lower:]')" -f ci/DOCKERFILE-${{ matrix.tag }} .
-      
+
       - name: Build tools environment
         if: ${{ matrix.type == 'tools' }}
         env:
