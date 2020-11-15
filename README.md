@@ -21,10 +21,10 @@ Table of Contents
 Installation
 ------------
 
-Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases) for your model and then install it via:
+Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases/latest) for your model and then install it via:
 
 ```bash
-sudo dpkg -i wireguard-${BOARD}-${RELEASE}.deb
+sudo dpkg -i ${BOARD}-${RELEASE}.deb
 ```
 
 After you will have be able to create a `wireguard` interface (`show interfaces`).
@@ -34,16 +34,18 @@ After you will have be able to create a `wireguard` interface (`show interfaces`
 Upgrade
 -------
 
-Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases) for your model and then perform upgrade with:
+Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases/latest) for your model and then perform upgrade:
 
 ```bash
+curl -OL https://github.com/WireGuard/wireguard-vyatta-ubnt/releases/download/${RELEASE}/${BOARD}-${RELEASE}.deb
+
 configure
 set interfaces wireguard wg0 route-allowed-ips false
 commit
 delete interfaces wireguard
 commit
 sudo rmmod wireguard
-sudo dpkg -i /path/to/wireguard-${BOARD}-${RELEASE}.deb
+sudo dpkg -i ${BOARD}-${RELEASE}.deb
 sudo modprobe wireguard
 load
 commit
