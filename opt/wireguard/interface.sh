@@ -24,6 +24,14 @@ function cfg_address {
     else
         OP=add
     fi
+    # Parse all IP address on interface
+    for ip in $(ip a show dev $INTERFACE | grep inet | awk '{print $2}'); do
+        # If adding IP address to the interface and IP address is already setup on interface
+        if [ $OP == "add" ] && [ $ip == "$1" ]; then
+            # Do not process the rest of the function
+            return
+        fi
+    done
     # Execute operation on link
     sudo /opt/vyatta/sbin/vyatta-address $OP $INTERFACE $1
 }
