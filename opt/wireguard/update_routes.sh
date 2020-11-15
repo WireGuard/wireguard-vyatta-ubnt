@@ -33,8 +33,10 @@ if [ ${#ROUTES[@]} -gt 0 ]; then
         # Create variable for CIDR from route
         cidr=$(echo "$route" | awk '{print $1}')
 
+        # If allowed-ips is empty
+        if [ ${#ALLOWED_IPS[@]} -eq 0 ] || \
         # If route does not match any allowed-ips
-        if [[ ! " ${ALLOWED_IPS[@]} " =~ " ${cidr} " ]] || \
+        [[ ! " ${ALLOWED_IPS[@]} " =~ " ${cidr} " ]] || \
         # If route-allowed-ips is false *and* route has CIDR that matches one of the allowed-ips
         ([ "$ROUTE_ALLOWED_IPS" == "false" ] && \
         [[ " ${ALLOWED_IPS[@]} " =~ " ${cidr} " ]]); then
