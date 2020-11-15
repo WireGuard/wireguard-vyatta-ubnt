@@ -18,7 +18,7 @@ alias node_value='$VYATTA_API returnValue $VYATTA_API_SLUG'
 alias node_values='$VYATTA_API returnValues $VYATTA_API_SLUG'
 
 # Create variable for ip route shorthand
-ROUTE_SLUG="dev $INTERFACE scope link"
+ROUTE_SLUG="dev $INTERFACE proto boot scope link"
 # Create array of all routes for interface
 readarray -t ROUTES < <(ip route show $ROUTE_SLUG)
 # Create array of all allowed-ips for interface
