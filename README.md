@@ -21,9 +21,11 @@ Table of Contents
 Installation
 ------------
 
-Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases/latest) for your model and then install it via:
+Download the [latest release](https://github.com/WireGuard/wireguard-vyatta-ubnt/releases/latest) for your model and then install it:
 
 ```bash
+curl -OL https://github.com/WireGuard/wireguard-vyatta-ubnt/releases/download/${RELEASE}/${BOARD}-${RELEASE}.deb
+
 sudo dpkg -i ${BOARD}-${RELEASE}.deb
 ```
 
