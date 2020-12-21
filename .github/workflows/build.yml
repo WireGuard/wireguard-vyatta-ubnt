@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "master"
+      - "template-rewrite"
   pull_request:
 
 env:
