@@ -109,10 +109,10 @@ fi
 if ! ip link show dev $INTERFACE &> /dev/null; then
     # Create link
     sudo ip link add dev $INTERFACE type wireguard
+else
+    # Run all configured 'down' commands
+    eval "$(node_value down-command)" > /dev/null || exit 1
 fi
-
-# Run all configured 'down' commands
-eval "$(node_value down-command)" > /dev/null || exit 1
 
 # If interface is deleted
 if [ "$ACTION" = DELETE ]; then
