@@ -17,10 +17,12 @@ alias node_list='$VYATTA_API listNodes $VYATTA_API_SLUG'
 alias node_value='$VYATTA_API returnValue $VYATTA_API_SLUG'
 alias node_values='$VYATTA_API returnValues $VYATTA_API_SLUG'
 
+# Create variable for ip device
+DEV="dev $INTERFACE"
 # Create variable for ip route shorthand
-ROUTE_SLUG="dev $INTERFACE proto boot scope link"
+ROUTE_SLUG="$DEV proto boot"
 # Create array of all routes for interface
-readarray -t ROUTES < <(ip route show $ROUTE_SLUG)
+readarray -t ROUTES < <(ip -4 route show $ROUTE_SLUG; ip -6 route show $ROUTE_SLUG)
 # Create array of all allowed-ips for interface
 ALLOWED_IPS=( $(sudo wg show $INTERFACE allowed-ips | sed 's/^.*\t//;s/ /\n/g' | sort -nr -k 2 -t /) )
 # Create variable for route-allowed-ips value
@@ -29,7 +31,7 @@ ROUTE_ALLOWED_IPS=$(node_value route-allowed-ips || true)
 # If one or more routes exist for interface
 if [ ${#ROUTES[@]} -gt 0 ]; then
     # Parse all routes for interface
-    for route in ${ROUTES[@]}; do
+    for route in "${ROUTES[@]}"; do
         # Create variable for CIDR from route
         cidr=$(echo "$route" | awk '{print $1}')
 
@@ -56,10 +58,13 @@ if [ "${ROUTE_ALLOWED_IPS:-x}" == "true" ]; then
         for ip in ${ALLOWED_IPS[@]}; do
             # Peer allowed-ips that are empty will return '(none)'
             # If ip is '(none)', then skip to the next in the list
-            if [ $ip == "(none)" ]; then continue; fi
+            if [ "${ip}" == "(none)" ]; then continue; fi
 
-            # If ip does not exist in routing table
-            if [[ ! " ${ROUTES[@]:-x} " =~ " ${ip} " ]]; then
+            # Create variable for route matching
+            ROUTE_SHOW="route show match $ip"
+            # If ip does not have a route with the interface
+            if [[ ! "$(ip -4 $ROUTE_SHOW 2> /dev/null)" =~ "${DEV}" ]] && \
+            [[ ! "$(ip -6 $ROUTE_SHOW 2> /dev/null)" =~ "${DEV}" ]]; then
                 # Create route
                 sudo ip route add $ip $ROUTE_SLUG
             fi
