@@ -112,6 +112,8 @@ if ! ip link show dev $INTERFACE &> /dev/null; then
 else
     # Run all configured 'down' commands
     eval "$(node_value down-command)" > /dev/null || exit 1
+    # Disable link
+    sudo ip link set down dev $INTERFACE
 fi
 
 # If interface is deleted
@@ -122,14 +124,12 @@ if [ "$ACTION" = DELETE ]; then
     exit
 fi
 
-# Disable link
-sudo ip link set down dev $INTERFACE
-
 # If disable is not set
 if ! node_exists disable; then
     # Enable link
     sudo ip link set up dev $INTERFACE
-
+    # Update routing table
+    /opt/wireguard/update_routes.sh "$INTERFACE"
     # Run all configured 'up' commands
     eval "$(node_value up-command) > /dev/null" || exit 1
 fi
