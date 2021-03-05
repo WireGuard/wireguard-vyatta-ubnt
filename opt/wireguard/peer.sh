@@ -39,6 +39,12 @@ function cfg_disable() {
         cfg_endpoint
         cfg_persistent-keepalive
         cfg_preshared-key
+    # If disable is set
+    elif [ "$ACTION" = SET ]; then
+        # Remove peer
+        sudo wg set $INTERFACE peer $PEER remove
+        # Update routing table
+        /opt/wireguard/update_routes.sh "$INTERFACE"
     fi
 }
 function cfg_endpoint() {
