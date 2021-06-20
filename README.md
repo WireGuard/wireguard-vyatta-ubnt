@@ -152,6 +152,20 @@ On the USG3/4 Pro the commandline setup above does not survive reboot/re-provisi
 ```json
 {
   "firewall": {
+    "name": {
+      "WAN_LOCAL": {
+        "rule": {
+          "20": {
+            "action": "accept",
+            "description": "WireGuard",
+            "destination": {
+                    "port": "51820" //Firewall port - can be customised, adjust listen port accordingly
+            },
+            "protocol": "udp"
+          }
+        }
+      }
+    },
     "group": {
       "network-group": {
         "remote_user_vpn_network": {
