@@ -23,6 +23,7 @@ The naming scheme for source packages is a bit counter intuitive. Here is a list
 
 E50:
  - EdgeRouter X
+ - EdgeRouter X SFP
 
 E100:
  - EdgeRouter Lite
