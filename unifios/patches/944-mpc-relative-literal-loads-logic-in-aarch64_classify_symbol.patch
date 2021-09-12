@@ -1,0 +1,45 @@
+diff --git a/gcc/config/aarch64/aarch64.c b/gcc/config/aarch64/aarch64.c
+index 83dbd57..fa61289 100644
+--- a/gcc/config/aarch64/aarch64.c
++++ b/gcc/config/aarch64/aarch64.c
+@@ -9324,7 +9324,7 @@ aarch64_classify_symbol (rtx x, rtx offset)
+ 	  /* This is alright even in PIC code as the constant
+ 	     pool reference is always PC relative and within
+ 	     the same translation unit.  */
+-	  if (nopcrelative_literal_loads
++	  if (aarch64_nopcrelative_literal_loads
+ 	      && CONSTANT_POOL_ADDRESS_P (x))
+ 	    return SYMBOL_SMALL_ABSOLUTE;
+ 	  else
+diff --git a/gcc/testsuite/gcc.target/aarch64/pr79041.c b/gcc/testsuite/gcc.target/aarch64/pr79041.c
+new file mode 100644
+index 0000000..a23b1ae
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/aarch64/pr79041.c
+@@ -0,0 +1,26 @@
++/* PR target/79041.  Check that we don't generate the LO12 relocations
++   for -mpc-relative-literal-loads.  */
++/* { dg-do compile } */
++/* { dg-options "-O2 -mcmodel=large -mpc-relative-literal-loads" } */
++
++extern int strcmp (const char *, const char *);
++extern char *strcpy (char *, const char *);
++
++static struct
++{
++  char *b;
++  char *c;
++} d[] = {
++  {"0", "000000000000000"}, {"1", "111111111111111"},
++};
++
++void
++e (const char *b, char *c)
++{
++  int i;
++  for (i = 0; i < 1; ++i)
++    if (!strcmp (d[i].b, b))
++      strcpy (c, d[i].c);
++}
++
++/* { dg-final { scan-assembler-not ":lo12:" } } */

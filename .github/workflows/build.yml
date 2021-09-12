@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - "master"
+      - "udm-support"
   pull_request:
+  workflow_dispatch:
 
 env:
   MODULE_VERSION: "1.0.20210606"
@@ -241,9 +243,160 @@ jobs:
           name: release_${{ matrix.device }}-v${{ matrix.version }}
           path: ${{ matrix.device }}-v${{ matrix.version }}-v${{ env.MODULE_VERSION }}-v${{ env.TOOLS_VERSION }}.deb
 
+  udm-prepare-buildroot:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download buildroot-2017.11.1
+        run: |
+          curl -o buildroot.tar.bz2 https://buildroot.org/downloads/buildroot-2017.11.1.tar.bz2
+          tar -xf buildroot.tar.bz2
+      - name: Download WireGuard module source
+        run: |
+          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
+          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.asc
+          unxz wireguard-linux-compat-$MODULE_VERSION.tar.xz
+          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-linux-compat-$MODULE_VERSION.tar.asc wireguard-linux-compat-$MODULE_VERSION.tar
+      - name: Download WireGuard tools source
+        run: |
+          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.xz https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.xz
+          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.asc https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.asc
+          unxz wireguard-tools-$TOOLS_VERSION.tar.xz
+          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-tools-$TOOLS_VERSION.tar.asc wireguard-tools-$TOOLS_VERSION.tar
+      - name: Copy packages
+        run: cp -pr unifios/packages/* buildroot-2017.11.1/package
+      - name: Copy WireGuard source
+        run: |
+          cp wireguard-linux-compat-$MODULE_VERSION.tar buildroot-2017.11.1/package/wireguard-linux-compat/
+          cp wireguard-tools-$TOOLS_VERSION.tar buildroot-2017.11.1/package/wireguard-tools/
+      - name: Set package versions
+        run: |
+          sed -i "s/PACKAGE_VERSION/$MODULE_VERSION/g" buildroot-2017.11.1/package/wireguard-linux-compat/wireguard-linux-compat.mk
+          sed -i "s/PACKAGE_VERSION/$TOOLS_VERSION/g" buildroot-2017.11.1/package/wireguard-tools/wireguard-tools.mk
+      - name: Patches
+        run: |
+          patch -p0 <unifios/patches/wireguard-packages.patch
+          patch -p0 <unifios/patches/openresolv-package.patch
+          patch -d buildroot-2017.11.1 -p1 <unifios/patches/add-kernel-4-19.patch
+          cp unifios/patches/0001-m4-glibc-change-work-around.patch buildroot-2017.11.1/package/m4
+          cp unifios/patches/0001-bison-glibc-change-work-around.patch buildroot-2017.11.1/package/bison
+          cp unifios/patches/944-mpc-relative-literal-loads-logic-in-aarch64_classify_symbol.patch buildroot-2017.11.1/package/gcc/6.4.0
+      - name: Generate artifacts
+        run: tar -cf buildroot.tar buildroot-2017.11.1
+      - name: Store headers
+        uses: actions/upload-artifact@v2
+        with:
+          name: buildroot
+          path: buildroot.tar
+  udm-build-modules:
+    needs: [udm-prepare-buildroot]
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        base: [1.9.0-10, 1.10.0-8, 1.10.0-12]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore buildroot
+        uses: actions/download-artifact@v2
+        with:
+          name: buildroot
+      - name: Extract buildroot
+        run: tar -xf buildroot.tar
+      - name: Build wireguard module
+        run: |
+          mkdir -p modules
+          cp unifios/udm-${{ matrix.base }}/buildroot-config.txt buildroot-2017.11.1/.config
+          cp unifios/udm-${{ matrix.base }}/UDM-config.txt buildroot-2017.11.1/UDM-config.txt
+          versions="$(cat unifios/udm-${{ matrix.base }}/versions.txt)"
+          prefix="$(cat unifios/udm-${{ matrix.base }}/prefix.txt)"
+          cd buildroot-2017.11.1
+          for ver in $versions; do
+            echo "Building version $ver"
+            make wireguard-linux-compat-dirclean
+            sed -i -e '/CONFIG_LOCALVERSION=/s/.*/CONFIG_LOCALVERSION="'$ver'"/' UDM-config.txt
+            make wireguard-linux-compat-rebuild -j$(nproc)
+            cp output/build/wireguard-linux-compat-$MODULE_VERSION/src/wireguard.ko ../modules/wireguard-${prefix}${ver}.ko
+            cp output/build/linux-custom/net/ipv4/netfilter/iptable_raw.ko ../modules/iptable_raw-${prefix}${ver}.ko
+            cp output/build/linux-custom/net/ipv6/netfilter/ip6table_raw.ko ../modules/ip6table_raw-${prefix}${ver}.ko
+          done
+      - name: Store modules
+        uses: actions/upload-artifact@v2
+        with:
+          name: modules
+          path: modules
+  udm-build-tools:
+    needs: [udm-prepare-buildroot]
+    runs-on: ubuntu-20.04
+    env:
+      BASE: 1.9.0-10
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore buildroot
+        uses: actions/download-artifact@v2
+        with:
+          name: buildroot
+      - name: Extract buildroot
+        run: tar -xf buildroot.tar
+      - name: Configure buildroot
+        run: |
+          cp unifios/udm-${{ env.BASE }}/buildroot-config.txt buildroot-2017.11.1/.config
+          cp unifios/udm-${{ env.BASE }}/UDM-config.txt buildroot-2017.11.1/UDM-config.txt
+      - name: Build WireGuard tools
+        run: cd buildroot-2017.11.1 && make wireguard-tools-rebuild # -> output/target/usr/bin/wg
+      - name: Build bash
+        run: cd buildroot-2017.11.1 && make bash-rebuild # -> output/target/bin/bash
+      - name: Build resolvconf
+        run: cd buildroot-2017.11.1 && make openresolv-rebuild # -> output/target/sbin/resolvconf
+      - name: Build qrencode
+        run: cd buildroot-2017.11.1 && make libqrencode-rebuild # -> output/target/usr/bin/qrencode
+      - name: Collect tools
+        run: |
+          mkdir -p tools/usr tools/usr/bin tools/sbin tools/etc
+          cp buildroot-2017.11.1/output/target/usr/bin/wg tools/usr/bin
+          cp buildroot-2017.11.1/output/target/bin/bash tools/usr/bin
+          cp buildroot-2017.11.1/output/target/usr/bin/qrencode tools/usr/bin
+          cp buildroot-2017.11.1/output/target/sbin/resolvconf tools/sbin
+          cp buildroot-2017.11.1/output/target/etc/resolvconf.conf tools/etc
+          cp buildroot-2017.11.1/output/build/wireguard-tools-$TOOLS_VERSION/src/wg-quick/linux.bash tools/usr/bin/wg-quick
+      - name: Store tools
+        uses: actions/upload-artifact@v2
+        with:
+          name: tools
+          path: tools
+  udm-package:
+    needs: [udm-build-tools, udm-build-modules]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare
+        run: mkdir package
+      - name: Restore modules
+        uses: actions/download-artifact@v2
+        with:
+          name: modules
+          path: package
+      - name: Restore tools
+        uses: actions/download-artifact@v2
+        with:
+          name: tools
+          path: package
+      - name: Add setup
+        run: cp unifios/setup_wireguard.sh package/
+      - name: Make binaries executable
+        run: chmod +x package/usr/bin/* package/sbin/*
+      - name: Package
+        run: tar -C package -czf UnifiOS-$MODULE_VERSION.tar.gz ./
+      - name: Store package
+        uses: actions/upload-artifact@v2
+        with:
+          name: release_unifios
+          path: UnifiOS-${{ env.MODULE_VERSION }}.tar.gz
+
   release:
     runs-on: ubuntu-20.04
-    needs: package
+    needs:
+      - package
+      - udm-package
 
     steps:
       - uses: actions/checkout@v2
@@ -251,7 +404,7 @@ jobs:
         id: create_release
         uses: fossoreslp/release-artifacts@v1
         with:
-          title: Wireguard ${{ env.MODULE_VERSION }} ${{ env.TOOLS_VERSION }}
+          title: WireGuard ${{ env.MODULE_VERSION }} ${{ env.TOOLS_VERSION }}
           template: ci/release_body.md
           token: ${{ secrets.GITHUB_TOKEN }}
           variables: ${{ toJSON(env) }}

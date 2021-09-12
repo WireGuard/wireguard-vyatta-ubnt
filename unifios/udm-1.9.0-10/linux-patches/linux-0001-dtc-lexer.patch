@@ -1,0 +1,23 @@
+--- a/scripts/dtc/dtc-lexer.l	2021-02-03 05:03:13.000000000 -0700
++++ b/scripts/dtc/dtc-lexer.l	2021-06-21 15:08:33.265930996 -0600
+@@ -39,7 +39,7 @@
+ #include "srcpos.h"
+ #include "dtc-parser.tab.h"
+ 
+-YYLTYPE yylloc;
++extern YYLTYPE yylloc;
+ 
+ /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
+ #define	YY_USER_ACTION \
+
+--- a/scripts/dtc/dtc-lexer.lex.c_shipped	2021-06-21 16:04:48.890865860 -0600
++++ b/scripts/dtc/dtc-lexer.lex.c_shipped	2021-06-21 16:05:13.163909071 -0600
+@@ -637,7 +637,7 @@
+ #include "srcpos.h"
+ #include "dtc-parser.tab.h"
+ 
+-YYLTYPE yylloc;
++extern YYLTYPE yylloc;
+ 
+ /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
+ #define	YY_USER_ACTION \

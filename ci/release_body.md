@@ -4,13 +4,13 @@ Changelog
 
 Versions
 ---------
-| Name | Version |
-|--------|---------|
-| Module | {{MODULE_VERSION}} |
-| Tools | {{TOOLS_VERSION}} |
-| EdgeOS v1 | {{FIRMWARE_ER_v1}} |
-| EdgeOS v2 | {{FIRMWARE_ER_v2}} |
-| USG firmware | {{FIRMWARE_UGW}} |
+| Name         | Version            |
+| ------------ | ------------------ |
+| Module       | {{MODULE_VERSION}} |
+| Tools        | {{TOOLS_VERSION}}  |
+| EdgeOS v1    | {{FIRMWARE_ER_v1}} |
+| EdgeOS v2    | {{FIRMWARE_ER_v2}} |
+| USG firmware | {{FIRMWARE_UGW}}   |
 
 See below for binaries.
 
@@ -49,3 +49,7 @@ UGW4:
 
 UGWXG:
  - UniFi Security Gateway XG 8
+
+UnifiOS:
+ - UDM
+ - UDM Pro
