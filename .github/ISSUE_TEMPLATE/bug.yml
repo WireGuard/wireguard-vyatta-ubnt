@@ -1,0 +1,54 @@
+name: Bug Report
+description: File a bug report
+labels: [bug/possible]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out this form to report a bug
+  - type: input
+    id: package
+    attributes:
+      label: Package version
+      description: Which version of this package did you use (the tag of the release)
+      placeholder: e.g. 1.0.20210606-1
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware version
+      description: Which firmware version are you running on your device
+      placeholder: e.g. 2.0.9-hotfix1
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      description: On which device are you running WireGuard
+      options:
+        - EdgeRouter X (SFP) - e50
+        - EdgeRouter Lite / PoE - e100
+        - EdgeRouter 8 (Pro) - e200
+        - EdgeRouter 4 / 6P / 12 - e300
+        - EdgeRouter Infinity - e1000
+        - UniFi Security Gateway - UGW3
+        - UniFi Security Gateway Pro 4 - UGW4
+        - UniFi Security Gateway XG 8 - UGWXG
+        - Unifi Dream Machine (Pro / SE) - UDM
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue description
+      description: Description of the issue you are facing
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Configuration and log output
+      description: Relevant configuration and log output. This will be automatically formatted into code, so no need for backticks. Remember to redact sensitive information like private keys and public ips.
+      render: shell
