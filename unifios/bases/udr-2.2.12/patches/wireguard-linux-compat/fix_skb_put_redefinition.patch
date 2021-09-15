@@ -1,0 +1,18 @@
+--- a/src/compat/compat.h	2021-06-06 03:29:55.000000000 -0600
++++ b/src/compat/compat.h	2021-11-02 17:56:06.379943874 -0600
+@@ -664,15 +664,6 @@
+ #define genl_dump_check_consistent(a, b) genl_dump_check_consistent(a, b, &genl_family)
+ #endif
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 13, 0) && !defined(ISRHEL7)
+-static inline void *skb_put_data(struct sk_buff *skb, const void *data, unsigned int len)
+-{
+-	void *tmp = skb_put(skb, len);
+-	memcpy(tmp, data, len);
+-	return tmp;
+-}
+-#endif
+-
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 19, 0) && !defined(ISRHEL7)
+ #define napi_complete_done(n, work_done) napi_complete(n)
+ #endif

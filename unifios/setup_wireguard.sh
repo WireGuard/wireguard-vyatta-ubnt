@@ -1,31 +1,28 @@
 #!/bin/sh
-# Tusc00 on reddit, @tusc69 on ubnt forums
-#
-# v4-7-21	Initial release. Updated script to auto load kernel module based on installed firmware version.
-# v4-8-21	Build now includes iptables_raw module. This is required for wg-quick when changing routes. Switched to MUSL static library
-#		for building wireguard tools and bash given the number of CVEs with glib 2.26. Preliminary support for the UXG.
-# v4-10-21	Updated release to include utils such as htop, iftop and qrencode. The last one allows easy import of wireguard configs
-#		into your IOS/Android WireGuard client using QR codes. 
-# v6-23-21	Added support for resolvconf
-WIREGUARD="/mnt/data/wireguard"
+# This script loads the wireguard module and copies the wireguard tools.
+# The built-in kernel module will be loaded if it exists.
+WIREGUARD="$(cd "$(dirname "$0")" && pwd -P)"
 
-ln -sf $WIREGUARD/usr/bin/wg-quick /usr/bin
-ln -sf $WIREGUARD/usr/bin/wg /usr/bin
-ln -sf $WIREGUARD/usr/bin/bash /usr/bin
-ln -sf $WIREGUARD/usr/bin/bash /bin
-ln -sf $WIREGUARD/usr/bin/qrencode /usr/bin
-ln -sf $WIREGUARD/sbin/resolvconf /sbin
-
-# create symlink to wireguard config folder
-if [ ! -d "/etc/wireguard" ]
-then
-   ln -s $WIREGUARD/etc/wireguard /etc/wireguard
+# create symlinks to wireguard tools
+ln -sf $WIREGUARD/tools/wg-quick /usr/bin
+ln -sf $WIREGUARD/tools/wg /usr/bin
+ln -sf $WIREGUARD/tools/qrencode /usr/bin
+if [ ! -x "$(command -v bash)" ]; then
+	ln -sf $WIREGUARD/tools/bash /bin
+fi
+if [ ! -x "$(command -v resolvconf)" ]; then
+	ln -sf $WIREGUARD/tools/resolvconf /sbin
+	if [ ! -f "/etc/resolvconf.conf" ]
+	then
+	   ln -sf $WIREGUARD/etc/resolvconf.conf /etc
+	fi
 fi
 
-# create symlink to resolvconf config file
-if [ ! -f "/etc/resolvconf.conf" ]
+# create symlink to wireguard config folder
+mkdir -p $WIREGUARD/etc/wireguard
+if [ ! -d "/etc/wireguard" ]
 then
-   ln -s $WIREGUARD/etc/resolvconf.conf /etc/
+   ln -sf $WIREGUARD/etc/wireguard /etc/wireguard
 fi
 
 # required by wg-quick
@@ -43,8 +40,14 @@ if [ $? -eq 1 ]
 then
    ver=`uname -r`
    echo "loading wireguard..."
-   insmod $WIREGUARD/wireguard-$ver.ko
-# iptable_raw required for wg-quick's use of iptables-restore
-   insmod $WIREGUARD/iptable_raw-$ver.ko
-   insmod $WIREGUARD/ip6table_raw-$ver.ko
+   if [ -e /lib/modules/$ver/extra/wireguard.ko ]; then
+      modprobe wireguard
+   elif [ -e $WIREGUARD/modules/wireguard-$ver.ko ]; then
+     insmod $WIREGUARD/modules/wireguard-$ver.ko
+#    iptable_raw required for wg-quick's use of iptables-restore
+     insmod $WIREGUARD/modules/iptable_raw-$ver.ko
+     insmod $WIREGUARD/modules/ip6table_raw-$ver.ko
+   else
+     echo "Unsupported Kernel version $ver"
+   fi
 fi

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - "master"
-      - "udm-support"
   pull_request:
   workflow_dispatch:
 
@@ -293,7 +292,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        base: [1.9.0-10, 1.10.0-8, 1.10.0-12]
+        base: [udm-1.9.0-10, udm-1.10.0-8, udm-1.10.0-12, udm-se-2.2.4, udr-2.2.12]
     steps:
       - uses: actions/checkout@v2
       - name: Restore buildroot
@@ -305,20 +304,31 @@ jobs:
       - name: Build wireguard module
         run: |
           mkdir -p modules
-          cp unifios/udm-${{ matrix.base }}/buildroot-config.txt buildroot-2017.11.1/.config
-          cp unifios/udm-${{ matrix.base }}/UDM-config.txt buildroot-2017.11.1/UDM-config.txt
-          versions="$(cat unifios/udm-${{ matrix.base }}/versions.txt)"
-          prefix="$(cat unifios/udm-${{ matrix.base }}/prefix.txt)"
+          cp unifios/bases/${{ matrix.base }}/buildroot-config.txt buildroot-2017.11.1/.config
+          cp unifios/bases/${{ matrix.base }}/kernel-config buildroot-2017.11.1/kernel-config
+          versions="$(cat unifios/bases/${{ matrix.base }}/versions.txt)"
+          prefix="$(cat unifios/bases/${{ matrix.base }}/prefix)"
+          rm -rf ./buildroot-2017.11.1/linux-patches ./buildroot-2017.11.1/patches
+          if [ -d "unifios/bases/${{ matrix.base }}/linux-patches" ]; then
+            cp -rf "unifios/bases/${{ matrix.base }}/linux-patches" ./buildroot-2017.11.1/
+          fi
+          if [ -f "unifios/bases/${{ matrix.base }}/linux-patches.tar.gz" ]; then
+            tar -C ./buildroot-2017.11.1 -xf "unifios/bases/${{ matrix.base }}/linux-patches.tar.gz"
+          fi
+          if [ -d "unifios/bases/${{ matrix.base }}/patches" ]; then
+            cp -rf "unifios/bases/${{ matrix.base }}/patches" ./buildroot-2017.11.1/
+          fi
           cd buildroot-2017.11.1
+          (IFS=','
           for ver in $versions; do
             echo "Building version $ver"
             make wireguard-linux-compat-dirclean
-            sed -i -e '/CONFIG_LOCALVERSION=/s/.*/CONFIG_LOCALVERSION="'$ver'"/' UDM-config.txt
+            sed -i -e '/CONFIG_LOCALVERSION=/s/.*/CONFIG_LOCALVERSION="'$ver'"/' kernel-config
             make wireguard-linux-compat-rebuild -j$(nproc)
             cp output/build/wireguard-linux-compat-$MODULE_VERSION/src/wireguard.ko ../modules/wireguard-${prefix}${ver}.ko
             cp output/build/linux-custom/net/ipv4/netfilter/iptable_raw.ko ../modules/iptable_raw-${prefix}${ver}.ko
             cp output/build/linux-custom/net/ipv6/netfilter/ip6table_raw.ko ../modules/ip6table_raw-${prefix}${ver}.ko
-          done
+          done)
       - name: Store modules
         uses: actions/upload-artifact@v2
         with:
@@ -328,7 +338,7 @@ jobs:
     needs: [udm-prepare-buildroot]
     runs-on: ubuntu-20.04
     env:
-      BASE: 1.9.0-10
+      BASE: udm-1.9.0-10
     steps:
       - uses: actions/checkout@v2
       - name: Restore buildroot
@@ -339,8 +349,8 @@ jobs:
         run: tar -xf buildroot.tar
       - name: Configure buildroot
         run: |
-          cp unifios/udm-${{ env.BASE }}/buildroot-config.txt buildroot-2017.11.1/.config
-          cp unifios/udm-${{ env.BASE }}/UDM-config.txt buildroot-2017.11.1/UDM-config.txt
+          cp unifios/bases/${{ env.BASE }}/buildroot-config.txt buildroot-2017.11.1/.config
+          cp unifios/bases/${{ env.BASE }}/kernel-config buildroot-2017.11.1/kernel-config
       - name: Build WireGuard tools
         run: cd buildroot-2017.11.1 && make wireguard-tools-rebuild # -> output/target/usr/bin/wg
       - name: Build bash
@@ -351,13 +361,13 @@ jobs:
         run: cd buildroot-2017.11.1 && make libqrencode-rebuild # -> output/target/usr/bin/qrencode
       - name: Collect tools
         run: |
-          mkdir -p tools/usr tools/usr/bin tools/sbin tools/etc
-          cp buildroot-2017.11.1/output/target/usr/bin/wg tools/usr/bin
-          cp buildroot-2017.11.1/output/target/bin/bash tools/usr/bin
-          cp buildroot-2017.11.1/output/target/usr/bin/qrencode tools/usr/bin
-          cp buildroot-2017.11.1/output/target/sbin/resolvconf tools/sbin
-          cp buildroot-2017.11.1/output/target/etc/resolvconf.conf tools/etc
-          cp buildroot-2017.11.1/output/build/wireguard-tools-$TOOLS_VERSION/src/wg-quick/linux.bash tools/usr/bin/wg-quick
+          mkdir -p tools
+          cp buildroot-2017.11.1/output/target/usr/bin/wg tools/
+          cp buildroot-2017.11.1/output/target/bin/bash tools/
+          cp buildroot-2017.11.1/output/target/usr/bin/qrencode tools/
+          cp buildroot-2017.11.1/output/target/sbin/resolvconf tools/
+          cp buildroot-2017.11.1/output/target/etc/resolvconf.conf tools/
+          cp buildroot-2017.11.1/output/build/wireguard-tools-$TOOLS_VERSION/src/wg-quick/linux.bash tools/wg-quick
       - name: Store tools
         uses: actions/upload-artifact@v2
         with:
@@ -369,28 +379,31 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Prepare
-        run: mkdir package
+        run: mkdir -p package package/wireguard package/wireguard/modules package/wireguard/tools package/wireguard/etc
       - name: Restore modules
         uses: actions/download-artifact@v2
         with:
           name: modules
-          path: package
+          path: package/wireguard/modules
       - name: Restore tools
         uses: actions/download-artifact@v2
         with:
           name: tools
-          path: package
+          path: package/wireguard/tools
       - name: Add setup
-        run: cp unifios/setup_wireguard.sh package/
-      - name: Make binaries executable
-        run: chmod +x package/usr/bin/* package/sbin/*
+        run: cp unifios/setup_wireguard.sh package/wireguard/
+      - name: Fix permissions
+        run: |
+          mv package/wireguard/tools/resolvconf.conf package/wireguard/etc
+          chmod +x package/wireguard/tools/* package/wireguard/setup_wireguard.sh
+          sudo chown -R root:root package/wireguard
       - name: Package
-        run: tar -C package -czf UnifiOS-$MODULE_VERSION.tar.gz ./
+        run: tar -C package -czf UnifiOS-$MODULE_VERSION-$TOOLS_VERSION.tar.gz ./
       - name: Store package
         uses: actions/upload-artifact@v2
         with:
           name: release_unifios
-          path: UnifiOS-${{ env.MODULE_VERSION }}.tar.gz
+          path: UnifiOS-${{ env.MODULE_VERSION }}-${{ env.TOOLS_VERSION }}.tar.gz
 
   release:
     runs-on: ubuntu-20.04
