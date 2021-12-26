@@ -90,7 +90,7 @@ jobs:
           tar -xf wireguard-linux-compat-$MODULE_VERSION.tar --one-top-level=module --strip-components=1
           cd module
           sed -i 's/ --dirty//g' src/Makefile
-          patch < ../siphash_no_fallthrough.patch
+          patch -p1 < ../siphash_no_fallthrough.patch
       - name: Upload module source
         uses: actions/upload-artifact@v2
         with:
