@@ -90,6 +90,7 @@ jobs:
           tar -xf wireguard-linux-compat-$MODULE_VERSION.tar --one-top-level=module --strip-components=1
           cd module
           sed -i 's/ --dirty//g' src/Makefile
+          patch < ../siphash_no_fallthrough.patch
       - name: Upload module source
         uses: actions/upload-artifact@v2
         with:
@@ -126,6 +127,7 @@ jobs:
             image: mtk-kernel
 
     steps:
+      - uses: actions/checkout@v2
       - name: Restore module source
         uses: actions/download-artifact@v2
         with:
@@ -139,7 +141,6 @@ jobs:
         run: |
           tar -xf headers.tar
           cd module/src
-          patch -p1 < $GITHUB_WORKSPACE/siphash_no_fallthrough.patch
           make -j$(nproc) ARCH=mips CROSS_COMPILE=${{ matrix.toolchain }} KERNELDIR=$GITHUB_WORKSPACE/headers module
           ${{ matrix.toolchain }}strip --strip-debug wireguard.ko
       - name: Upload built module
