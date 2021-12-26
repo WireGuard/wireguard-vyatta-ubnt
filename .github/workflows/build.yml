@@ -139,6 +139,7 @@ jobs:
         run: |
           tar -xf headers.tar
           cd module/src
+          patch -p1 < $GITHUB_WORKSPACE/siphash_no_fallthrough.patch
           make -j$(nproc) ARCH=mips CROSS_COMPILE=${{ matrix.toolchain }} KERNELDIR=$GITHUB_WORKSPACE/headers module
           ${{ matrix.toolchain }}strip --strip-debug wireguard.ko
       - name: Upload built module
