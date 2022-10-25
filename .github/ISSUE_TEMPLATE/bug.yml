@@ -28,7 +28,7 @@ body:
       label: Device
       description: On which device are you running WireGuard
       options:
-        - EdgeRouter X (SFP) - e50
+        - EdgeRouter X (SFP, 10 X, EP-R6) - e50
         - EdgeRouter Lite / PoE - e100
         - EdgeRouter 8 (Pro) - e200
         - EdgeRouter 4 / 6P / 12 - e300
