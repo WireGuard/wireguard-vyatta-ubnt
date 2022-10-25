@@ -22,8 +22,10 @@ Device names
 The naming scheme for source packages is a bit counter intuitive. Here is a list to find out which package is for your device.
 
 E50:
- - EdgeRouter X
- - EdgeRouter X SFP
+ - EdgeRouter X (ER-X)
+ - EdgeRouter X SFP (ER-X-SFP)
+ - EdgeRouter 10 X (ER-10X)
+ - EdgePoint 6 (EP‑R6)
 
 E100:
  - EdgeRouter Lite
