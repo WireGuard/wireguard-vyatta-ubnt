@@ -2667,8 +2667,7 @@ BR2_PACKAGE_TCPDUMP=y
 # BR2_PACKAGE_WAVEMON is not set
 # BR2_PACKAGE_WGET is not set
 # BR2_PACKAGE_WHOIS is not set
-BR2_PACKAGE_WIREGUARD_LINUX_COMPAT=y
-BR2_PACKAGE_WIREGUARD_TOOLS=y
+# BR2_PACKAGE_WIREGUARD is not set
 # BR2_PACKAGE_WIRELESS_REGDB is not set
 BR2_PACKAGE_WIRELESS_TOOLS=y
 # BR2_PACKAGE_WIRESHARK is not set
@@ -2694,35 +2693,35 @@ BR2_PACKAGE_XL2TP=y
 #
 
 #
-# Please note:                                           
+# Please note:
 #
 
 #
-# - Buildroot does *not* generate binary packages,       
+# - Buildroot does *not* generate binary packages,
 #
 
 #
-# - Buildroot does *not* install any package database.   
+# - Buildroot does *not* install any package database.
 #
 
 #
-# *                                                      
+# *
 #
 
 #
-# It is up to you to provide those by yourself if you    
+# It is up to you to provide those by yourself if you
 #
 
 #
-# want to use any of those package managers.             
+# want to use any of those package managers.
 #
 
 #
-# *                                                      
+# *
 #
 
 #
-# See the manual:                                        
+# See the manual:
 #
 
 #

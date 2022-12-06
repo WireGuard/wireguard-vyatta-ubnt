@@ -1342,7 +1342,7 @@ CONFIG_VIRTIO_BLK=y
 # CONFIG_CXL_EEH is not set
 
 #
-# Mediatek Peripherals 
+# Mediatek Peripherals
 #
 # CONFIG_USB_MTK_HDRC is not set
 # CONFIG_MTK_MUSB_QMU_SUPPORT is not set
@@ -1586,7 +1586,7 @@ CONFIG_DUMMY=y
 # CONFIG_NET_FC is not set
 CONFIG_IFB=m
 # CONFIG_NET_TEAM is not set
-# CONFIG_MACVLAN is not set
+CONFIG_MACVLAN=m
 # CONFIG_IPVLAN is not set
 # CONFIG_VXLAN is not set
 # CONFIG_GENEVE is not set

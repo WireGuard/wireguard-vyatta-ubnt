@@ -20,36 +20,13 @@ jobs:
         run: |
           curl -o buildroot.tar.bz2 https://buildroot.org/downloads/buildroot-2017.11.1.tar.bz2
           tar -xf buildroot.tar.bz2
-      - name: Download WireGuard module source
-        run: |
-          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
-          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.asc
-          unxz wireguard-linux-compat-$MODULE_VERSION.tar.xz
-          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-linux-compat-$MODULE_VERSION.tar.asc wireguard-linux-compat-$MODULE_VERSION.tar
-      - name: Download WireGuard tools source
-        run: |
-          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.xz https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.xz
-          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.asc https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.asc
-          unxz wireguard-tools-$TOOLS_VERSION.tar.xz
-          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-tools-$TOOLS_VERSION.tar.asc wireguard-tools-$TOOLS_VERSION.tar
-      - name: Copy packages
-        run: cp -pr unifios/packages/* buildroot-2017.11.1/package
-      - name: Copy WireGuard source
-        run: |
-          cp wireguard-linux-compat-$MODULE_VERSION.tar buildroot-2017.11.1/package/wireguard-linux-compat/
-          cp wireguard-tools-$TOOLS_VERSION.tar buildroot-2017.11.1/package/wireguard-tools/
-      - name: Set package versions
-        run: |
-          sed -i "s/PACKAGE_VERSION/$MODULE_VERSION/g" buildroot-2017.11.1/package/wireguard-linux-compat/wireguard-linux-compat.mk
-          sed -i "s/PACKAGE_VERSION/$TOOLS_VERSION/g" buildroot-2017.11.1/package/wireguard-tools/wireguard-tools.mk
       - name: Patches
         run: |
-          patch -p0 <unifios/patches/wireguard-packages.patch
-          patch -p0 <unifios/patches/openresolv-package.patch
           patch -d buildroot-2017.11.1 -p1 <unifios/patches/add-kernel-4-19.patch
           cp unifios/patches/0001-m4-glibc-change-work-around.patch buildroot-2017.11.1/package/m4
           cp unifios/patches/0001-bison-glibc-change-work-around.patch buildroot-2017.11.1/package/bison
           cp unifios/patches/944-mpc-relative-literal-loads-logic-in-aarch64_classify_symbol.patch buildroot-2017.11.1/package/gcc/6.4.0
+          cp unifios/patches/0001-dtc-fix-yylloc-duplication.patch buildroot-2017.11.1/package/dtc
       - name: Generate artifacts
         run: tar -cf buildroot.tar buildroot-2017.11.1
       - name: Store headers
@@ -62,7 +39,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        base: [udm-1.9.0-10, udm-1.10.0-8, udm-1.10.0-12, udm-se-2.2.4, udr-2.2.12]
+        base: [udr-2.2.12]
     steps:
       - uses: actions/checkout@v2
       - name: Restore buildroot
@@ -71,7 +48,7 @@ jobs:
           name: buildroot
       - name: Extract buildroot
         run: tar -xf buildroot.tar
-      - name: Build wireguard module
+      - name: Build macvlan module
         run: |
           mkdir -p modules
           cp unifios/bases/${{ matrix.base }}/buildroot-config.txt buildroot-2017.11.1/.config
@@ -89,56 +66,48 @@ jobs:
             cp -rf "unifios/bases/${{ matrix.base }}/patches" ./buildroot-2017.11.1/
           fi
           cd buildroot-2017.11.1
-          (IFS=','
-          for ver in $versions; do
-            echo "Building version $ver"
-            make wireguard-linux-compat-dirclean
-            sed -i -e '/CONFIG_LOCALVERSION=/s/.*/CONFIG_LOCALVERSION="'$ver'"/' kernel-config
-            make wireguard-linux-compat-rebuild -j$(nproc)
-            cp output/build/wireguard-linux-compat-$MODULE_VERSION/src/wireguard.ko ../modules/wireguard-${prefix}${ver}.ko
-            cp output/build/linux-custom/net/ipv4/netfilter/iptable_raw.ko ../modules/iptable_raw-${prefix}${ver}.ko
-            cp output/build/linux-custom/net/ipv6/netfilter/ip6table_raw.ko ../modules/ip6table_raw-${prefix}${ver}.ko
-          done)
+          make linux-build
+          cp output/build/linux-custom/drivers/net/macvlan.ko ../modules/macvlan.ko
       - name: Store modules
         uses: actions/upload-artifact@v2
         with:
           name: modules
           path: modules
-  udm-package:
-    needs: [udm-build-tools, udm-build-modules]
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      - name: Prepare
-        run: mkdir -p package package/wireguard package/wireguard/modules
-      - name: Restore modules
-        uses: actions/download-artifact@v2
-        with:
-          name: modules
-          path: package/wireguard/modules
-      - name: Add setup
-        run: cp unifios/setup_wireguard.sh package/wireguard/
-      - name: Package
-        run: tar -C package -czf UnifiOS-$MODULE_VERSION.tar.gz ./
-      - name: Store package
-        uses: actions/upload-artifact@v2
-        with:
-          name: release_unifios
-          path: UnifiOS-${{ env.MODULE_VERSION }}-${{ env.TOOLS_VERSION }}.tar.gz
+  # udm-package:
+  #   needs: [udm-build-tools, udm-build-modules]
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Prepare
+  #       run: mkdir -p package package/wireguard package/wireguard/modules
+  #     - name: Restore modules
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: modules
+  #         path: package/wireguard/modules
+  #     - name: Add setup
+  #       run: cp unifios/setup_wireguard.sh package/wireguard/
+  #     - name: Package
+  #       run: tar -C package -czf UnifiOS-$MODULE_VERSION.tar.gz ./
+  #     - name: Store package
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: release_unifios
+  #         path: UnifiOS-${{ env.MODULE_VERSION }}-${{ env.TOOLS_VERSION }}.tar.gz
 
-  release:
-    runs-on: ubuntu-20.04
-    needs:
-      - package
-      - udm-package
+  # release:
+  #   runs-on: ubuntu-20.04
+  #   needs:
+  #     - package
+  #     - udm-package
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: fossoreslp/release-artifacts@v1
-        with:
-          title: WireGuard ${{ env.MODULE_VERSION }}
-          template: ci/release_body.md
-          token: ${{ secrets.GITHUB_TOKEN }}
-          variables: ${{ toJSON(env) }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Create Release
+  #       id: create_release
+  #       uses: fossoreslp/release-artifacts@v1
+  #       with:
+  #         title: WireGuard ${{ env.MODULE_VERSION }}
+  #         template: ci/release_body.md
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         variables: ${{ toJSON(env) }}
