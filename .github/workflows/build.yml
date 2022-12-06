@@ -33,7 +33,7 @@ jobs:
       - name: Store headers
         uses: actions/upload-artifact@v2
         with:
-          name: buildroot
+          name: buildroot.tar
           path: buildroot.tar
   udm-build-modules:
     needs: [udm-prepare-buildroot]
@@ -46,7 +46,7 @@ jobs:
       - name: Restore buildroot
         uses: actions/download-artifact@v2
         with:
-          name: buildroot
+          name: buildroot.tar
       - name: Extract buildroot
         run: tar -xf buildroot.tar
       - name: Restore buildroot ccache
@@ -76,11 +76,11 @@ jobs:
           cd buildroot-${BUILDROOT_VERSION}
           make linux-build
           cp output/build/linux-custom/drivers/net/macvlan.ko ../modules/macvlan.ko
-      - name: Store modules
+      - name: Store kernel module
         uses: actions/upload-artifact@v2
         with:
-          name: modules
-          path: modules
+          name: ${{ matrix.base }}-macvlan.ko
+          path: modules/macvlan.ko
   # udm-package:
   #   needs: [udm-build-tools, udm-build-modules]
   #   runs-on: ubuntu-20.04
