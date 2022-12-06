@@ -13,10 +13,10 @@ env:
   BUILDROOT_VERSION: "2017.11.1"
 
 jobs:
-  udm-prepare-buildroot:
+  prepare-buildroot:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Download buildroot-${{ env.BUILDROOT_VERSION }}
         run: |
           curl -o buildroot.tar.bz2 https://buildroot.org/downloads/buildroot-${BUILDROOT_VERSION}.tar.bz2
@@ -31,20 +31,21 @@ jobs:
       - name: Generate artifacts
         run: tar -cf buildroot.tar buildroot-${BUILDROOT_VERSION}
       - name: Store headers
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: buildroot.tar
           path: buildroot.tar
-  udm-build-modules:
-    needs: [udm-prepare-buildroot]
+
+  build-module:
+    needs: [prepare-buildroot]
     runs-on: ubuntu-20.04
     strategy:
       matrix:
         base: [udr-2.2.12]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Restore buildroot
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: buildroot.tar
       - name: Extract buildroot
@@ -75,14 +76,14 @@ jobs:
           fi
           cd buildroot-${BUILDROOT_VERSION}
           make linux-build
-          cp output/build/linux-custom/drivers/net/macvlan.ko ../modules/macvlan.ko
       - name: Store kernel module
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.base }}-macvlan.ko
-          path: modules/macvlan.ko
+          path: output/build/linux-custom/drivers/net/macvlan.ko
+
   # udm-package:
-  #   needs: [udm-build-tools, udm-build-modules]
+  #   needs: [build-module]
   #   runs-on: ubuntu-20.04
   #   steps:
   #     - uses: actions/checkout@v2
