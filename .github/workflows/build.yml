@@ -23,11 +23,13 @@ jobs:
           tar -xf buildroot.tar.bz2
       - name: Patches
         run: |
-          patch -d buildroot-${BUILDROOT_VERSION} -p1 <unifios/patches/add-kernel-4-19.patch
-          cp unifios/patches/0001-m4-glibc-change-work-around.patch buildroot-${BUILDROOT_VERSION}/package/m4
-          cp unifios/patches/0001-bison-glibc-change-work-around.patch buildroot-${BUILDROOT_VERSION}/package/bison
-          cp unifios/patches/944-mpc-relative-literal-loads-logic-in-aarch64_classify_symbol.patch buildroot-${BUILDROOT_VERSION}/package/gcc/6.4.0
-          cp unifios/patches/0001-dtc-fix-yylloc-duplication.patch buildroot-${BUILDROOT_VERSION}/package/dtc
+          patch -d ./buildroot-${BUILDROOT_VERSION} -p1 <unifios/patches/add-kernel-4-19.patch
+          cp unifios/patches/0001-m4-glibc-change-work-around.patch ./buildroot-${BUILDROOT_VERSION}/package/m4
+          cp unifios/patches/0001-bison-glibc-change-work-around.patch ./buildroot-${BUILDROOT_VERSION}/package/bison
+          cp unifios/patches/944-mpc-relative-literal-loads-logic-in-aarch64_classify_symbol.patch ./buildroot-${BUILDROOT_VERSION}/package/gcc/6.4.0
+          cp unifios/patches/0001-dtc-fix-yylloc-duplication.patch ./buildroot-${BUILDROOT_VERSION}/package/dtc
+
+          rm -rf ./buildroot-${BUILDROOT_VERSION}/linux-patches ./buildroot-${BUILDROOT_VERSION}/patches
       - name: Generate artifacts
         run: tar -cf buildroot.tar buildroot-${BUILDROOT_VERSION}
       - name: Store headers
@@ -62,9 +64,6 @@ jobs:
           mkdir -p modules
           cp unifios/bases/${{ matrix.base }}/buildroot-config.txt buildroot-${BUILDROOT_VERSION}/.config
           cp unifios/bases/${{ matrix.base }}/kernel-config buildroot-${BUILDROOT_VERSION}/kernel-config
-          versions="$(cat unifios/bases/${{ matrix.base }}/versions.txt)"
-          prefix="$(cat unifios/bases/${{ matrix.base }}/prefix)"
-          rm -rf ./buildroot-${BUILDROOT_VERSION}/linux-patches ./buildroot-${BUILDROOT_VERSION}/patches
           if [ -d "unifios/bases/${{ matrix.base }}/linux-patches" ]; then
             cp -rf "unifios/bases/${{ matrix.base }}/linux-patches" ./buildroot-${BUILDROOT_VERSION}/
           fi
