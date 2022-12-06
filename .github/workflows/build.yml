@@ -38,12 +38,24 @@ jobs:
           name: buildroot.tar
           path: buildroot.tar
 
+  get-bases:
+    runs-on: ubuntu-20.04
+    outputs:
+      bases: ${{ steps.get-bases.outputs.directories }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build bases list from directories in unifios/bases
+        id: get-bases
+        run:
+          python3 ci/dir_to_json.py unifios/bases >> $GITHUB_OUTPUT
+
+
   build-module:
-    needs: [prepare-buildroot]
+    needs: [prepare-buildroot, get-bases]
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        base: [udr-2.2.12]
+        base: ${{ fromJSON(needs.get-bases.outputs.bases) }}
     steps:
       - uses: actions/checkout@v3
       - name: Restore buildroot
