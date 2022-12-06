@@ -49,6 +49,13 @@ jobs:
           name: buildroot
       - name: Extract buildroot
         run: tar -xf buildroot.tar
+      - name: Restore buildroot ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/.buildroot-ccache
+          key: ${{ env.BUILDROOT_VERSION }}-buildroot_ccache-${{ matrix.base }}
+          restore-keys: |
+            ${{ env.BUILDROOT_VERSION }}-buildroot_ccache-
       - name: Build macvlan module
         run: |
           mkdir -p modules
