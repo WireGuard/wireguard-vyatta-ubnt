@@ -1,4 +1,4 @@
-name: Build kernel module and tools
+name: Build kernel module
 
 on:
   push:
@@ -8,242 +8,10 @@ on:
   workflow_dispatch:
 
 env:
-  MODULE_VERSION: "1.0.20220627"
-  TOOLS_VERSION: "1.0.20210914"
+  MODULE_VERSION: "1.0.0"
   PACKAGE_RELEASE: "1"
-  FIRMWARE_ER_v1: "v1.10.11"
-  FIRMWARE_ER_v2: "v2.0.9"
-  FIRMWARE_UGW: "4.4.50"
 
 jobs:
-  headers:
-    runs-on: ubuntu-20.04
-    container:
-      image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
-      env:
-        CROSS: ${{ matrix.toolchain }}
-
-    strategy:
-      matrix:
-        device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
-        version: [1, 2]
-        toolchain: [mips64-octeon-linux-]
-        image: [octeon-kernel]
-        exclude:
-          - device: ugw3
-            version: 2
-          - device: ugw4
-            version: 2
-          - device: ugwxg
-            version: 2
-        include:
-          - device: e50
-            version: 1
-            toolchain: mipsel-mtk-linux-
-            image: mtk-kernel
-          - device: e50
-            version: 2
-            toolchain: mipsel-linux-gnu-
-            image: mipsel-kernel
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build headers
-        run: |
-          mkdir /headers
-          curl -o src.tar.bz2 $(jq -r '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ci/ubnt-source.json)
-          tar -xf src.tar.bz2 --wildcards 'source/kernel_*' --strip-components 1
-          mv kernel_* kernel.tar.gz
-          tar -xf kernel.tar.gz --strip-components 1
-          if [ ${{ matrix.version }} -ne 1 ]; then make ARCH=mips ubnt_er_${{ matrix.device }}_defconfig; fi;
-          make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS prepare modules_prepare
-          make -j$(nproc) ARCH=mips CROSS_COMPILE=$CROSS modules #vmlinux
-          cp Module.symvers .config /headers
-          make mrproper
-          make -j$(nproc) ARCH=mips O=/headers CROSS_COMPILE=$CROSS prepare modules_prepare scripts
-          rm /headers/source /headers/Makefile
-          # This is from alpine linux who in turn got it from
-          # http://kernel.ubuntu.com/git/ubuntu/ubuntu-zesty.git/tree/debian/rules.d/3-binary-indep.mk
-          find . -path './include/*' -prune -o -path './scripts/*' -prune -o -type f \( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o -name '*.sh' -o -name '*.pl' -o -name '*.lds' -o -name 'Platform' \) -print | cpio -pdm "/headers"
-          cp -a scripts include "/headers"
-          find $(find arch -name include -type d -print) -type f | cpio -pdm "/headers"
-          tar -cf headers.tar /headers/
-      - name: Store headers
-        uses: actions/upload-artifact@v2
-        with:
-          name: headers-${{ matrix.device }}-${{ matrix.version }}
-          path: headers.tar
-
-  module-prepare:
-    runs-on: ubuntu-20.04
-    container:
-      image: buildpack-deps:focal
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Download module source
-        run: |
-          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
-          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.asc
-          unxz wireguard-linux-compat-$MODULE_VERSION.tar.xz
-          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-linux-compat-$MODULE_VERSION.tar.asc wireguard-linux-compat-$MODULE_VERSION.tar
-          tar -xf wireguard-linux-compat-$MODULE_VERSION.tar --one-top-level=module --strip-components=1
-          cd module
-          sed -i 's/ --dirty//g' src/Makefile
-          patch -p1 < ../siphash_no_fallthrough.patch
-      - name: Upload module source
-        uses: actions/upload-artifact@v2
-        with:
-          name: module-src
-          path: module
-
-  module:
-    needs: [module-prepare, headers]
-    runs-on: ubuntu-20.04
-    container:
-      image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
-
-    strategy:
-      matrix:
-        device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
-        version: [1, 2]
-        toolchain: [mips64-octeon-linux-]
-        image: [octeon-kernel]
-        exclude:
-          - device: ugw3
-            version: 2
-          - device: ugw4
-            version: 2
-          - device: ugwxg
-            version: 2
-        include:
-          - device: e50
-            version: 1
-            toolchain: mipsel-mtk-linux-
-            image: mtk-kernel
-          - device: e50
-            version: 2
-            toolchain: mipsel-mtk-linux-
-            image: mtk-kernel
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Restore module source
-        uses: actions/download-artifact@v2
-        with:
-          name: module-src
-          path: module
-      - name: Restore headers
-        uses: actions/download-artifact@v2
-        with:
-          name: headers-${{ matrix.device }}-${{ matrix.version }}
-      - name: Build module
-        run: |
-          tar -xf headers.tar
-          cd module/src
-          make -j$(nproc) ARCH=mips CROSS_COMPILE=${{ matrix.toolchain }} KERNELDIR=$GITHUB_WORKSPACE/headers module
-          ${{ matrix.toolchain }}strip --strip-debug wireguard.ko
-      - name: Upload built module
-        uses: actions/upload-artifact@v2
-        with:
-          name: module-${{ matrix.device }}-${{ matrix.version }}
-          path: module/src/wireguard.ko
-
-  tools:
-    runs-on: ubuntu-20.04
-    container:
-      image: ${{ matrix.image }}
-
-    strategy:
-      matrix:
-        include:
-          - arch: mips
-            target: mips-linux-musl
-            image: lochnair/musl-buildenv:mips # Will be: mips-tools
-          - arch: mipsel
-            target: mipsel-linux-musl
-            image: lochnair/musl-buildenv:mipsel # Will be: mipsel-tools
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build tools
-        env:
-          TARGET: ${{ matrix.target }}
-          ARCH: ${{ matrix.arch }}
-        run: |
-          apk add gnupg
-          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.xz https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.xz
-          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.asc https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.asc
-          unxz wireguard-tools-$TOOLS_VERSION.tar.xz
-          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-tools-$TOOLS_VERSION.tar.asc wireguard-tools-$TOOLS_VERSION.tar
-          tar -xf wireguard-tools-$TOOLS_VERSION.tar
-          mv wireguard-tools-$TOOLS_VERSION tools
-          cd tools/src
-          CC="$ARCH-linux-musl-gcc" LDLIBS="-static" make -j$(nproc)
-          $ARCH-linux-musl-strip --strip-unneeded wg
-      - name: Upload built tools
-        uses: actions/upload-artifact@v2
-        with:
-          name: tools-${{ matrix.arch }}
-          path: tools/src/wg
-
-  package:
-    needs: [module, tools]
-    runs-on: ubuntu-20.04
-    container:
-      image: debian
-
-    strategy:
-      matrix:
-        device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
-        version: [1, 2]
-        arch: [mips]
-        exclude:
-          - device: ugw3
-            version: 2
-          - device: ugw4
-            version: 2
-          - device: ugwxg
-            version: 2
-        include:
-          - device: e50
-            version: 1
-            arch: mipsel
-          - device: e50
-            version: 2
-            arch: mipsel
-    steps:
-      - uses: actions/checkout@v2
-      - name: Download module
-        uses: actions/download-artifact@v2
-        with:
-          name: module-${{ matrix.device }}-${{ matrix.version }}
-      - name: Download tools
-        uses: actions/download-artifact@v2
-        with:
-          name: tools-${{ matrix.arch }}
-      - name: Build package
-        run: |
-          apt update
-          apt install -y kmod
-          export KERNEL=$(modinfo -F vermagic wireguard.ko | cut -d ' ' -f 1)
-          mkdir -p pkg/usr/bin pkg/lib/modules/$KERNEL/kernel/net
-          cp -r debian pkg/DEBIAN
-          cp -r opt pkg/opt
-          cp wireguard.ko pkg/lib/modules/$KERNEL/kernel/net/wireguard.ko
-          cp wg pkg/usr/bin/wg
-          chmod +x pkg/usr/bin/wg
-          sed -i "s/PACKAGE_VERSION/$MODULE_VERSION/g" pkg/DEBIAN/control
-          sed -i "s/PACKAGE_RELEASE/$PACKAGE_RELEASE/g" pkg/DEBIAN/control
-          sed -i "s/KERNEL_VER/$KERNEL/g" pkg/DEBIAN/preinst
-          sed -i "s/PACKAGE_ARCH/${{ matrix.arch }}/g" pkg/DEBIAN/control
-          dpkg-deb -b -Z gzip pkg
-          mv pkg.deb ${{ matrix.device }}-v${{ matrix.version }}-v$MODULE_VERSION-v$TOOLS_VERSION.deb
-      - name: Upload package
-        uses: actions/upload-artifact@v2
-        with:
-          name: release_${{ matrix.device }}-v${{ matrix.version }}
-          path: ${{ matrix.device }}-v${{ matrix.version }}-v${{ env.MODULE_VERSION }}-v${{ env.TOOLS_VERSION }}.deb
-
   udm-prepare-buildroot:
     runs-on: ubuntu-20.04
     steps:
@@ -336,71 +104,22 @@ jobs:
         with:
           name: modules
           path: modules
-  udm-build-tools:
-    needs: [udm-prepare-buildroot]
-    runs-on: ubuntu-20.04
-    env:
-      BASE: udm-1.9.0-10
-    steps:
-      - uses: actions/checkout@v2
-      - name: Restore buildroot
-        uses: actions/download-artifact@v2
-        with:
-          name: buildroot
-      - name: Extract buildroot
-        run: tar -xf buildroot.tar
-      - name: Configure buildroot
-        run: |
-          cp unifios/bases/${{ env.BASE }}/buildroot-config.txt buildroot-2017.11.1/.config
-          cp unifios/bases/${{ env.BASE }}/kernel-config buildroot-2017.11.1/kernel-config
-      - name: Build WireGuard tools
-        run: cd buildroot-2017.11.1 && make wireguard-tools-rebuild # -> output/target/usr/bin/wg
-      - name: Build bash
-        run: cd buildroot-2017.11.1 && make bash-rebuild # -> output/target/bin/bash
-      - name: Build resolvconf
-        run: cd buildroot-2017.11.1 && make openresolv-rebuild # -> output/target/sbin/resolvconf
-      - name: Build qrencode
-        run: cd buildroot-2017.11.1 && make libqrencode-rebuild # -> output/target/usr/bin/qrencode
-      - name: Collect tools
-        run: |
-          mkdir -p tools
-          cp buildroot-2017.11.1/output/target/usr/bin/wg tools/
-          cp buildroot-2017.11.1/output/target/bin/bash tools/
-          cp buildroot-2017.11.1/output/target/usr/bin/qrencode tools/
-          cp buildroot-2017.11.1/output/target/sbin/resolvconf tools/
-          cp buildroot-2017.11.1/output/target/etc/resolvconf.conf tools/
-          cp buildroot-2017.11.1/output/build/wireguard-tools-$TOOLS_VERSION/src/wg-quick/linux.bash tools/wg-quick
-      - name: Store tools
-        uses: actions/upload-artifact@v2
-        with:
-          name: tools
-          path: tools
   udm-package:
     needs: [udm-build-tools, udm-build-modules]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - name: Prepare
-        run: mkdir -p package package/wireguard package/wireguard/modules package/wireguard/tools package/wireguard/etc
+        run: mkdir -p package package/wireguard package/wireguard/modules
       - name: Restore modules
         uses: actions/download-artifact@v2
         with:
           name: modules
           path: package/wireguard/modules
-      - name: Restore tools
-        uses: actions/download-artifact@v2
-        with:
-          name: tools
-          path: package/wireguard/tools
       - name: Add setup
         run: cp unifios/setup_wireguard.sh package/wireguard/
-      - name: Fix permissions
-        run: |
-          mv package/wireguard/tools/resolvconf.conf package/wireguard/etc
-          chmod +x package/wireguard/tools/* package/wireguard/setup_wireguard.sh
-          sudo chown -R root:root package/wireguard
       - name: Package
-        run: tar -C package -czf UnifiOS-$MODULE_VERSION-$TOOLS_VERSION.tar.gz ./
+        run: tar -C package -czf UnifiOS-$MODULE_VERSION.tar.gz ./
       - name: Store package
         uses: actions/upload-artifact@v2
         with:
@@ -419,7 +138,7 @@ jobs:
         id: create_release
         uses: fossoreslp/release-artifacts@v1
         with:
-          title: WireGuard ${{ env.MODULE_VERSION }} ${{ env.TOOLS_VERSION }}
+          title: WireGuard ${{ env.MODULE_VERSION }}
           template: ci/release_body.md
           token: ${{ secrets.GITHUB_TOKEN }}
           variables: ${{ toJSON(env) }}
