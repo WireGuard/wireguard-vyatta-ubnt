@@ -1,2 +1,0 @@
-help: Show wireguard interface transfer statistics
-run: sudo wg show all transfer

@@ -1,2 +1,0 @@
-help: Show specified wireguard interface allowed ips
-run: sudo wg show "$4" allowed-ips

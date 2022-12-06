@@ -1,5 +1,0 @@
-type: txt
-help: Description
-
-syntax:expression: pattern $VAR(@) "^.{1,256}$" \
-	; "interface description is too long (limit 256 characters)"

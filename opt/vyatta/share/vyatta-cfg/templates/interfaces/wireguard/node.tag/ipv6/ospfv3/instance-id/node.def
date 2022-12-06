@@ -1,5 +1,0 @@
-type: u32
-help: Instance-id
-default: 0
-syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 255; "Must be between 0-255"
-val_help: u32:0-255; Instance Id (default 0)

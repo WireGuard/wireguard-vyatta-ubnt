@@ -1,9 +1,0 @@
-type: u32
-help: Link state transmit delay
-default: 1
-syntax:expression: $VAR(@) >= 1 && $VAR(@) <= 65535; "Must be between 1-65535"
-val_help: u32:1-65535; Link state transmit delay (default 1)
-update:expression: "vtysh-set -i $VAR(../../../@) -c \"interface $VAR(../../../@)\" \
-       -c \"ipv6 ospf transmit-delay $VAR(@)\"; "
-delete:expression: "vtysh-set -i $VAR(../../../@) -c \"interface $VAR(../../../@)\" \
-       -c \"ipv6 ospf transmit-delay 1\"; "

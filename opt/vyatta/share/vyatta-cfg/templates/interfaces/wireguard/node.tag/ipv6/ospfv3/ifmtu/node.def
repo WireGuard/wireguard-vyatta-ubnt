@@ -1,4 +1,0 @@
-type: u32
-help: Interface MTU
-syntax:expression: $VAR(@) >= 1 && $VAR(@) <= 65535; "Must be between 1-65535"
-val_help: u32:1-65535; Interface MTU

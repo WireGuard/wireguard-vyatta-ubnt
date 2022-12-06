@@ -1,2 +1,0 @@
-help: Clear interface information for a given wireguard interface
-allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show wireguard

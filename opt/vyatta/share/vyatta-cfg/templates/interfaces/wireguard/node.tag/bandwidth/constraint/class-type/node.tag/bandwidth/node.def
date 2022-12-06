@@ -1,4 +1,0 @@
-help: bandwidth constraint <1-10000000000 bits> (usable units : k, m, g)
-type: txt
-val_help: bandwidth constraint <1-10000000000 bits> (usable units : k, m, g)
-syntax:expression: exec "/usr/sbin/ubnt-interface --check-bw '$VAR(@)'"

@@ -1,5 +1,0 @@
-help: IPv6 Open Shortest Path First (OSPFv3)
-
-begin:   if ! /etc/init.d/vyatta-quagga status ospf6d > /dev/null ; then
-           sudo /etc/init.d/vyatta-quagga start ospf6d
-         fi

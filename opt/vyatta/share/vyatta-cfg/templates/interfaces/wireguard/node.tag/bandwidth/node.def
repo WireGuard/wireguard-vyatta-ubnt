@@ -1,6 +1,0 @@
-priority: 460
-help: Bandwidth parameters
-end: sudo /usr/sbin/ubnt-interface.pl --update-bw --if-name=$VAR(../@) \
-                                      --if-path="interfaces wireguard" \
-                                      --template-path="interfaces wireguard var" \
-                                      --cfg-root-path="interfaces wireguard $VAR(../@)"

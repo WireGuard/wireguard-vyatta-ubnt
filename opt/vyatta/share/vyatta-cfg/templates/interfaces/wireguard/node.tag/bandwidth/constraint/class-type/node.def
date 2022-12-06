@@ -1,5 +1,0 @@
-tag:
-help: DSTE Class Type name which bandwidth associated with
-type: txt
-val_help: DSTE Class Type name which bandwidth associated with
-commit:expression: exec "/usr/sbin/ubnt-mpls.pl --check-class-type-configured --class-type $VAR(@)"

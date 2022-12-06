@@ -1,2 +1,0 @@
-help: Show specified wireguard interface peers
-run: sudo wg show "$4" peers

@@ -1,2 +1,0 @@
-help: Show specified wireguard interface listen port
-run: sudo wg show "$4" listen-port

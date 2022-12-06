@@ -1,5 +1,0 @@
-help: Open Shortest Path First (OSPF) parameters
-
-begin:   if ! /etc/init.d/vyatta-quagga status ospfd > /dev/null ; then
-            sudo /etc/init.d/vyatta-quagga start ospfd
-         fi

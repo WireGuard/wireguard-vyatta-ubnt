@@ -1,2 +1,0 @@
-help: Show wireguard interface persistent keepalive
-run: sudo wg show all persistent-keepalive

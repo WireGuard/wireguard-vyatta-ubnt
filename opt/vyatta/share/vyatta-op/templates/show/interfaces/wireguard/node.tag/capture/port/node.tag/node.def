@@ -1,3 +1,0 @@
-help: Show captured traffic on specified wireguard interface port
-run: /opt/vyatta/bin/vyatta-tshark-interface-port.pl "$4" "$7" 0
-allowed: echo -n '<1-65535>'

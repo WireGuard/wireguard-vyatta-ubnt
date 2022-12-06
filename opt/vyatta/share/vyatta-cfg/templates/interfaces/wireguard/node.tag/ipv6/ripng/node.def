@@ -1,5 +1,0 @@
-help: Routing Information Protocol (RIPng)
-
-begin: if ! /etc/init.d/vyatta-quagga status ripngd > /dev/null ; then
-           sudo /etc/init.d/vyatta-quagga start ripngd
-       fi

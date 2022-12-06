@@ -1,3 +1,0 @@
-help: Show captured traffic excluding the specified wireguard interface port
-run: /opt/vyatta/bin/vyatta-tshark-interface-port.pl "$4" "$8" 1
-allowed: echo -n '<1-65535>'

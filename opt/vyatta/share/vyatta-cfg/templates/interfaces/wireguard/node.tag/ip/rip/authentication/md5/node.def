@@ -1,8 +1,0 @@
-tag:
-type: u32
-help: MD5 authentication parameters
-syntax:expression: $VAR(@) >= 1 && $VAR(@) <= 255; \
-                   "ID must be between 1 and 255"
-
-commit:expression: $VAR(../plaintext-password/) == "" ; \
-                   "plaintext-password already set"

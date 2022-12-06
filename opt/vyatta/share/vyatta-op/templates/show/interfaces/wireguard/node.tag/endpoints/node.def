@@ -1,2 +1,0 @@
-help: Show specified wireguard interface endpoints
-run: sudo wg show "$4"  endpoints

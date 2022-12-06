@@ -1,2 +1,0 @@
-help: Show specified wireguard interface public key
-run: sudo wg show "$4" public-key

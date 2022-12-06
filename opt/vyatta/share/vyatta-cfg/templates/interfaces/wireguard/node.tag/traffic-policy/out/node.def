@@ -1,5 +1,0 @@
-type: txt
-help: Egress traffic policy for interface
-allowed: sudo /usr/sbin/ubnt-tc --list-policy out
-update: sudo /opt/vyatta/sbin/vyatta-qos.pl --update-interface $VAR(../../@) out $VAR(@)
-delete: sudo /usr/sbin/ubnt-tc --delete-interface $VAR(../../@) out

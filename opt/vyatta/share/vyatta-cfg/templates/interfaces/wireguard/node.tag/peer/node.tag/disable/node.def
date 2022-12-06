@@ -1,3 +1,0 @@
-help: Disable peer
-
-end:  /opt/wireguard/peer.sh "$COMMIT_ACTION" "$VAR(../../@)" "$VAR(../@)" "disable"

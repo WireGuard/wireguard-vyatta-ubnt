@@ -1,6 +1,0 @@
-type: txt
-help: Maximum bandwidth for interface
-syntax:expression: exec "/usr/sbin/ubnt-interface --check-bw '$VAR(@)'"
-val_help: <1-10000000>k; Bandwidth in Kbps
-val_help: <1-10000>m; Bandwidth in Mbps
-val_help: <1-10>g; Bandwidth in Gbps

@@ -1,8 +1,0 @@
-priority: 460
-type: txt
-help: Description
-
-syntax:expression: pattern $VAR(@) "^.{1,256}$" \
-	; "interface description is too long (limit 256 characters)"
-
-end: /opt/wireguard/interface.sh "$COMMIT_ACTION" "$VAR(../@)" "description"

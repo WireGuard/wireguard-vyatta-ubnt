@@ -1,9 +1,0 @@
-help: Disable split horizon on specified interface
-commit:expression: ($VAR(../poison-reverse/) == ""); \
-    "You cannot have 'split-horizon poison-reverse' enabled with 'split-horizon' disabled for $VAR(../../../../@)"
-create:expression: "vtysh-set -i $VAR(../../../../@) --noerr \
-                              -c \"interface $VAR(../../../../@)\" \
-                              -c \"no ip rip split-horizon\"; "
-delete:expression: "vtysh-set -i $VAR(../../../../@) \
-                              -c \"interface $VAR(../../../../@)\" \
-                              -c \"ip rip split-horizon\"; "

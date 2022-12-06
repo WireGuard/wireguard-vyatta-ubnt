@@ -1,2 +1,0 @@
-help: Show specified wireguard interface private key
-run: sudo wg show "$4" private-key

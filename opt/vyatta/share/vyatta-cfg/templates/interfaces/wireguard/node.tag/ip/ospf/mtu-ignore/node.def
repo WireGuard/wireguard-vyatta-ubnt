@@ -1,7 +1,0 @@
-help: Disable Maximum Transmission Unit (MTU) mismatch detection
-create:expression: "vtysh-set -i $VAR(../../../@) \
-                              -c \"interface $VAR(../../../@)\" \
-                              -c \"ip ospf mtu-ignore\"; "
-delete:expression: "vtysh-set -i $VAR(../../../@) --noerr \
-                              -c \"interface $VAR(../../../@)\" \
-                              -c \"no ip ospf mtu-ignore\"; "

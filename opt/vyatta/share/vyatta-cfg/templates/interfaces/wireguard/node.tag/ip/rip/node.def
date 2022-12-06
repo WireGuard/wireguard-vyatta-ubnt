@@ -1,5 +1,0 @@
-help: Routing Information Protocol (RIP)
-
-begin: if ! /etc/init.d/vyatta-quagga status ripd > /dev/null ; then
-           sudo /etc/init.d/vyatta-quagga start ripd
-       fi

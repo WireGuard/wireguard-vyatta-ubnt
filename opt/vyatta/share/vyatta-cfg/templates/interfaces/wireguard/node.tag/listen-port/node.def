@@ -1,7 +1,0 @@
-priority: 460
-type: u32
-help: Local port number to accept connections
-syntax:expression: $VAR(@) > 0 && $VAR(@) < 65536;
-                   "Port must be between 1 and 65535"
-
-end: /opt/wireguard/interface.sh "$COMMIT_ACTION" "$VAR(../@)" "listen-port"
