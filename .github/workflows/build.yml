@@ -1,4 +1,4 @@
-name: Build kernel module
+name: Build kernel module (buildroot)
 
 on:
   push:

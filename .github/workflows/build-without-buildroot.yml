@@ -1,0 +1,37 @@
+name: Build Kernel Module
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+  workflow_dispatch:
+
+env:
+  RUNNER_VERSION: ubuntu-22.04
+
+jobs:
+  get-firmware-list:
+    runs-on: ${{ env.RUNNER_VERSION }}
+    outputs:
+      firmwares: ${{ steps.get-firmwares.outputs.directories }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build firmware list from directories in ./firmware
+        id: get-firmwares
+        run:
+          python3 ci/dir_to_json.py ./firmware >> $GITHUB_OUTPUT
+
+  build-module:
+    runs-on: ${{ env.RUNNER_VERSION }}
+    needs: get-firmware-list
+    strategy:
+      matrix:
+        firmware: ${{ fromJSON(needs.get-firmware-list.outputs.firmwares) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Load configuration for this firmware
+        id: firmware-config
+        run: echo CONFIG=$(jq -c .firmware/${{ matrix.firmware }}/config.json) >> $GITHUB_OUTPUT
+      - name: echo something to test
+        run: echo ${{ fromJson(env.CONFIG).kernel_tar_uri }}
