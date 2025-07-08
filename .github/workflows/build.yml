@@ -17,7 +17,7 @@ env:
 
 jobs:
   headers:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
       env:
@@ -75,7 +75,7 @@ jobs:
           path: headers.tar
 
   module-prepare:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: buildpack-deps:focal
 
@@ -99,7 +99,7 @@ jobs:
 
   module:
     needs: [module-prepare, headers]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
 
@@ -150,7 +150,7 @@ jobs:
           path: module/src/wireguard.ko
 
   tools:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: ${{ matrix.image }}
 
@@ -188,7 +188,7 @@ jobs:
 
   package:
     needs: [module, tools]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: debian
 
@@ -245,7 +245,7 @@ jobs:
           path: ${{ matrix.device }}-v${{ matrix.version }}-v${{ env.MODULE_VERSION }}-v${{ env.TOOLS_VERSION }}.deb
 
   udm-prepare-buildroot:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
       - name: Download buildroot-2017.11.1
@@ -291,7 +291,7 @@ jobs:
           path: buildroot.tar
   udm-build-modules:
     needs: [udm-prepare-buildroot]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         base: [udm-1.9.0-10, udm-1.10.0-8, udm-1.10.0-12, udm-se-2.2.4, udr-2.2.12]
@@ -338,7 +338,7 @@ jobs:
           path: modules
   udm-build-tools:
     needs: [udm-prepare-buildroot]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       BASE: udm-1.9.0-10
     steps:
@@ -377,7 +377,7 @@ jobs:
           path: tools
   udm-package:
     needs: [udm-build-tools, udm-build-modules]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
       - name: Prepare
@@ -408,7 +408,7 @@ jobs:
           path: UnifiOS-${{ env.MODULE_VERSION }}-${{ env.TOOLS_VERSION }}.tar.gz
 
   release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
       - package
       - udm-package
