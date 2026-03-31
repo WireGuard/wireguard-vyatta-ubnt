@@ -3,6 +3,9 @@ name: Build docker build environments
 on:
   workflow_dispatch:
 
+permissions:
+  packages: write
+
 jobs:
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
@@ -39,8 +42,11 @@ jobs:
         run: docker build --pull -t "$(echo $IMAGE | tr '[:upper:]' '[:lower:]')" -f ci/DOCKERFILE-tools .
 
       - name: Log into GitHub Container Registry
-      # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
-        run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push image to GitHub Container Registry
         run: docker push "$(echo $IMAGE | tr '[:upper:]' '[:lower:]')"
