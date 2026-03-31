@@ -9,13 +9,13 @@ SRC_ROOT="/usr/src/sources"
 mkdir -p $BUILD_ROOT/binutils $BUILD_ROOT/gcc $BUILD_ROOT/musl $SRC_ROOT
 cd /usr/src
 wget -nv \
-	https://ftpmirror.gnu.org/gnu/binutils/binutils-$BINUTILS_VER.tar.xz \
-	https://ftpmirror.gnu.org/gnu/gcc/gcc-$GCC_VER/gcc-$GCC_VER.tar.xz \
-	https://ftpmirror.gnu.org/gnu/gmp/gmp-$GMP_VER.tar.xz \
+	https://ftp.halifax.rwth-aachen.de/gnu/binutils/binutils-$BINUTILS_VER.tar.xz \
+	https://ftp.halifax.rwth-aachen.de/gnu/gcc/gcc-$GCC_VER/gcc-$GCC_VER.tar.xz \
+	https://ftp.halifax.rwth-aachen.de/gnu/gmp/gmp-$GMP_VER.tar.xz \
 	https://libisl.sourceforge.io/isl-$ISL_VER.tar.xz \
 	https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$KERNEL_VER.tar.xz \
-	https://ftpmirror.gnu.org/gnu/mpc/mpc-$MPC_VER.tar.gz \
-	https://ftpmirror.gnu.org/gnu/mpfr/mpfr-$MPFR_VER.tar.xz \
+	https://ftp.halifax.rwth-aachen.de/gnu/mpc/mpc-$MPC_VER.tar.gz \
+	https://ftp.halifax.rwth-aachen.de/gnu/mpfr/mpfr-$MPFR_VER.tar.xz \
 	https://www.musl-libc.org/releases/musl-$MUSL_VER.tar.gz
 
 
