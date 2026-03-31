@@ -47,7 +47,7 @@ jobs:
             image: mipsel-kernel
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Build headers
         run: |
           mkdir /headers
@@ -80,7 +80,7 @@ jobs:
       image: buildpack-deps:focal
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Download module source
         run: |
           curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
@@ -127,7 +127,7 @@ jobs:
             image: mtk-kernel
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Restore module source
         uses: actions/download-artifact@v4
         with:
@@ -164,7 +164,7 @@ jobs:
             target: mipsel-linux-musl
             image: lochnair/musl-buildenv:mipsel # Will be: mipsel-tools
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Build tools
         env:
           TARGET: ${{ matrix.target }}
@@ -212,7 +212,7 @@ jobs:
             version: 2
             arch: mipsel
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Download module
         uses: actions/download-artifact@v4
         with:
@@ -247,7 +247,7 @@ jobs:
   udm-prepare-buildroot:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Download buildroot-2017.11.1
         run: |
           curl -o buildroot.tar.bz2 https://buildroot.org/downloads/buildroot-2017.11.1.tar.bz2
@@ -296,7 +296,7 @@ jobs:
       matrix:
         base: [udm-1.9.0-10, udm-1.10.0-8, udm-1.10.0-12, udm-se-2.2.4, udr-2.2.12]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Restore buildroot
         uses: actions/download-artifact@v4
         with:
@@ -342,7 +342,7 @@ jobs:
     env:
       BASE: udm-1.9.0-10
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Restore buildroot
         uses: actions/download-artifact@v4
         with:
@@ -379,7 +379,7 @@ jobs:
     needs: [udm-build-tools, udm-build-modules]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Prepare
         run: mkdir -p package package/wireguard package/wireguard/modules package/wireguard/tools package/wireguard/etc
       - name: Restore modules
@@ -414,7 +414,7 @@ jobs:
       - udm-package
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Create Release
         id: create_release
         uses: fossoreslp/release-artifacts@v1
