@@ -4,6 +4,7 @@ FROM alpine:3.23
 RUN apk add --no-cache \
 	--update-cache \
 	autoconf \
+	bash \
 	automake \
 	bc \
 	bison \
