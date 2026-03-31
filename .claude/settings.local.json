@@ -11,7 +11,8 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:pkgs.alpinelinux.org)",
       "WebFetch(domain:wiki.alpinelinux.org)",
-      "WebFetch(domain:gcc.gnu.org)"
+      "WebFetch(domain:gcc.gnu.org)",
+      "WebFetch(domain:ftp.halifax.rwth-aachen.de)"
     ]
   }
 }

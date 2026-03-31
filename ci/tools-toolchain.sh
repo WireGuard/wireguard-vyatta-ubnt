@@ -14,7 +14,7 @@ wget -nv \
 	https://ftp.halifax.rwth-aachen.de/gnu/gmp/gmp-$GMP_VER.tar.xz \
 	https://libisl.sourceforge.io/isl-$ISL_VER.tar.xz \
 	https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$KERNEL_VER.tar.xz \
-	https://ftp.halifax.rwth-aachen.de/gnu/mpc/mpc-$MPC_VER.tar.gz \
+	https://ftp.halifax.rwth-aachen.de/gnu/mpc/mpc-$MPC_VER.tar.xz \
 	https://ftp.halifax.rwth-aachen.de/gnu/mpfr/mpfr-$MPFR_VER.tar.xz \
 	https://www.musl-libc.org/releases/musl-$MUSL_VER.tar.gz
 

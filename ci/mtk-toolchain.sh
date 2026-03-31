@@ -12,7 +12,7 @@ wget -nv \
 	https://ftp.halifax.rwth-aachen.de/gnu/gcc/gcc-$GCC_VER/gcc-$GCC_VER.tar.bz2 \
 	https://ftp.halifax.rwth-aachen.de/gnu/gmp/gmp-$GMP_VER.tar.xz \
 	https://libisl.sourceforge.io/isl-$ISL_VER.tar.xz \
-	https://ftp.halifax.rwth-aachen.de/gnu/mpc/mpc-$MPC_VER.tar.gz \
+	https://ftp.halifax.rwth-aachen.de/gnu/mpc/mpc-$MPC_VER.tar.xz \
 	https://ftp.halifax.rwth-aachen.de/gnu/mpfr/mpfr-$MPFR_VER.tar.xz
 
 # Extract source archives
