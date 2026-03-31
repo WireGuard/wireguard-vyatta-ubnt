@@ -12,21 +12,14 @@ wget -nv \
 
 # Extract source archives
 cd $SRC_ROOT
-tar -xvf ../toolchain-build-54.tar.bz2
+tar -xf ../toolchain-build-54.tar.bz2
 
-# Move sources
+# Move sources (using system GMP/MPC/MPFR instead of bundled ones)
 mv -v toolchain/gits/binutils .
 mv -v toolchain/gits/gcc .
-mv -v toolchain/src/gmp .
-mv -v toolchain/src/mpc .
-mv -v toolchain/src/mpfr .
 
-# Create symlinks to GCC dependencies
-cd $SRC_ROOT/gcc
-ln -s ../gmp gmp
-ln -s ../isl isl
-ln -s ../mpc mpc
-ln -s ../mpfr mpfr
+# Skip bundled GMP/MPC/MPFR - use system-installed versions instead,
+# as the old bundled versions fail to build with modern host compilers
 
 # Binutils
 cd $BUILD_ROOT/binutils
