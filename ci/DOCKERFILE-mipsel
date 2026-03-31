@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM debian:trixie-slim
 
 # Add mipsel support and install build tools
 RUN dpkg --add-architecture mipsel && \

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:ftp.gnu.org)",
+      "WebFetch(domain:gmplib.org)",
+      "WebFetch(domain:www.mpfr.org)",
+      "WebFetch(domain:www.multiprecision.org)",
+      "WebFetch(domain:libisl.sourceforge.io)",
+      "WebFetch(domain:cdn.kernel.org)",
+      "WebFetch(domain:www.musl-libc.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:pkgs.alpinelinux.org)",
+      "WebFetch(domain:wiki.alpinelinux.org)",
+      "WebFetch(domain:gcc.gnu.org)"
+    ]
+  }
+}

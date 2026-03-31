@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && \
 	apt-get install -y \
@@ -26,10 +26,10 @@ RUN apt-get update && \
 
 ARG BINUTILS_VER=2.29.1
 ARG GCC_VER=4.8.5
-ARG GMP_VER=6.1.2
+ARG GMP_VER=6.3.0
 ARG ISL_VER=0.18
-ARG MPC_VER=1.0.3
-ARG MPFR_VER=3.1.5
+ARG MPC_VER=1.4.0
+ARG MPFR_VER=4.2.2
 
 ARG TARGET=mipsel-mtk-linux
 
