@@ -19,7 +19,7 @@ jobs:
   headers:
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
+      image: ghcr.io/fossoreslp/wireguard-vyatta-ubnt/ubnt-build:${{ matrix.image }}
       env:
         CROSS: ${{ matrix.toolchain }}
 
@@ -101,7 +101,7 @@ jobs:
     needs: [module-prepare, headers]
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/fossoreslp/ubnt-build:${{ matrix.image }}
+      image: ghcr.io/fossoreslp/wireguard-vyatta-ubnt/ubnt-build:${{ matrix.image }}
 
     strategy:
       matrix:
@@ -159,10 +159,10 @@ jobs:
         include:
           - arch: mips
             target: mips-linux-musl
-            image: lochnair/musl-buildenv:mips # Will be: mips-tools
+            image: ghcr.io/fossoreslp/wireguard-vyatta-ubnt/ubnt-build:mips-tools
           - arch: mipsel
             target: mipsel-linux-musl
-            image: lochnair/musl-buildenv:mipsel # Will be: mipsel-tools
+            image: ghcr.io/fossoreslp/wireguard-vyatta-ubnt/ubnt-build:mipsel-tools
     steps:
       - uses: actions/checkout@v6
       - name: Build tools

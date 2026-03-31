@@ -25,7 +25,7 @@ jobs:
             - tag: octeon
               type: tools
     env:
-      IMAGE: ghcr.io/${{ github.repository_owner }}/ubnt-build:${{ matrix.tag }}-${{ matrix.type }}
+      IMAGE: ghcr.io/${{ github.repository }}/ubnt-build:${{ matrix.tag }}-${{ matrix.type }}
 
     steps:
       - uses: actions/checkout@v6
@@ -36,10 +36,7 @@ jobs:
 
       - name: Build tools environment
         if: ${{ matrix.type == 'tools' }}
-        env:
-          ARCH: ${{ matrix.tag }}
-          TARGET: ${{ matrix.tag }}-linux-musl
-        run: docker build --pull -t "$(echo $IMAGE | tr '[:upper:]' '[:lower:]')" -f ci/DOCKERFILE-tools .
+        run: docker build --pull --build-arg ARCH=${{ matrix.tag }} -t "$(echo $IMAGE | tr '[:upper:]' '[:lower:]')" -f ci/DOCKERFILE-tools .
 
       - name: Log into GitHub Container Registry
         uses: docker/login-action@v3
