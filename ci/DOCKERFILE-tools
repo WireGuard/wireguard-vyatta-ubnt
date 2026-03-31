@@ -46,8 +46,9 @@ ENV MUSL_VER=1.1.22
 
 ENV PATH="/opt/cross/bin:${PATH}"
 
-ENV TARGET="$ARCH-linux-musl"
+ARG ARCH
+ENV TARGET="${ARCH}-linux-musl"
 
-COPY ci/octeon-toolchain.sh /build_toolchain.sh
+COPY ci/tools-toolchain.sh /build_toolchain.sh
 
 RUN chmod +x /build_toolchain.sh && /build_toolchain.sh
