@@ -49,6 +49,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Build headers
+        env:
+          HOSTCFLAGS: "-fcommon"
         run: |
           mkdir /headers
           curl -o src.tar.bz2 $(jq -r '.["${{ matrix.device }}"]["${{ matrix.version }}"]' ci/ubnt-source.json)
