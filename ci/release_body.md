@@ -51,10 +51,3 @@ UGW4:
 
 UGWXG:
  - UniFi Security Gateway XG 8
-
-UnifiOS:
- - UniFi Dream Machine (UDM)
- - UniFi Dream Machine Pro (UDM-Pro)
- - UniFi Dream Machine Special Edition (UDM-SE)
- - UniFi Dream Router (UDR)
- - UniFi Next-Gen Gateway (UXG-Pro)
