@@ -42,7 +42,7 @@ make install
 
 # GCC - stage 1
 cd $BUILD_ROOT/gcc
-$SRC_ROOT/gcc-$GCC_VER/configure --prefix=/opt/cross --target=$TARGET --disable-multilib --disable-sim --enable-languages=c,c++ --with-abi=32 --with-mips-plt
+$SRC_ROOT/gcc-$GCC_VER/configure --prefix=/opt/cross --target=$TARGET --disable-multilib --disable-sim --disable-nls --enable-languages=c,c++ --with-abi=32 --with-mips-plt
 make -j$(nproc) all-gcc
 make install-gcc
 
