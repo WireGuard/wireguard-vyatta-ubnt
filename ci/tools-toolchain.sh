@@ -36,7 +36,7 @@ make ARCH=mips INSTALL_HDR_PATH=/opt/cross/$TARGET/ headers_install
 
 # Binutils
 cd $BUILD_ROOT/binutils
-$SRC_ROOT/binutils-$BINUTILS_VER/configure --prefix=/opt/cross --target=$TARGET --disable-multilib --disable-werror --disable-nls
+CFLAGS="-std=gnu11" $SRC_ROOT/binutils-$BINUTILS_VER/configure --prefix=/opt/cross --target=$TARGET --disable-multilib --disable-werror --disable-nls
 make -j$(nproc)
 make install
 
