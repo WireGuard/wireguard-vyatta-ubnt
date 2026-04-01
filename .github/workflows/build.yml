@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - "master"
-    tags:
-      - "*.*.*-*"
   pull_request:
   workflow_dispatch:
 
@@ -252,28 +250,3 @@ jobs:
         with:
           name: release_${{ matrix.device }}-v${{ matrix.version }}
           path: ${{ matrix.device }}-v${{ matrix.version }}-v${{ env.MODULE_VERSION }}-v${{ env.TOOLS_VERSION }}.deb
-
-  release:
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    needs:
-      - package
-
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: release_*
-          path: artifacts
-          merge-multiple: true
-      - name: Create Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          envsubst < ci/release_body.md > release_notes.md
-          gh release create "${{ github.ref_name }}" \
-            --title "WireGuard ${MODULE_VERSION} ${TOOLS_VERSION}" \
-            -F release_notes.md \
-            artifacts/*

@@ -1,0 +1,51 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Find latest successful build
+        id: find-run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RUN_ID=$(gh run list --workflow=build.yml --status=success --branch=master --limit=1 --json databaseId,headSha --jq '.[0] | "\(.databaseId) \(.headSha)"')
+          if [ -z "$RUN_ID" ]; then
+            echo "No successful build found"
+            exit 1
+          fi
+          echo "run_id=$(echo "$RUN_ID" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "sha=$(echo "$RUN_ID" | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
+          echo "Found successful build: $RUN_ID"
+
+      - name: Download release artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run download ${{ steps.find-run.outputs.run_id }} --pattern "release_*" --dir artifacts
+          # Flatten nested directories
+          find artifacts -type f -exec mv {} artifacts/ \;
+          find artifacts -mindepth 1 -type d -delete
+          ls -la artifacts/
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${MODULE_VERSION}-${PACKAGE_RELEASE}"
+          envsubst < ci/release_body.md > release_notes.md
+          gh release create "$TAG" \
+            --target "${{ steps.find-run.outputs.sha }}" \
+            --title "WireGuard ${MODULE_VERSION} ${TOOLS_VERSION}" \
+            -F release_notes.md \
+            artifacts/*
