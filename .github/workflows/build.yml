@@ -81,13 +81,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - name: Download module source
+      - uses: actions/checkout@v6
+        with:
+          repository: WireGuard/wireguard-linux-compat
+          ref: v${{ env.MODULE_VERSION }}
+          path: module
+      - name: Verify and prepare module source
         run: |
-          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
-          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.asc
-          unxz wireguard-linux-compat-$MODULE_VERSION.tar.xz
-          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-linux-compat-$MODULE_VERSION.tar.asc wireguard-linux-compat-$MODULE_VERSION.tar
-          tar -xf wireguard-linux-compat-$MODULE_VERSION.tar --one-top-level=module --strip-components=1
+          gpg --import ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg
+          git -C module verify-tag v$MODULE_VERSION
           cd module
           sed -i 's/ --dirty//g' src/Makefile
           patch -p1 < ../siphash_no_fallthrough.patch
@@ -165,18 +167,18 @@ jobs:
             image: ghcr.io/fossoreslp/wireguard-vyatta-ubnt/ubnt-build:mipsel-tools
     steps:
       - uses: actions/checkout@v6
-      - name: Build tools
+      - uses: actions/checkout@v6
+        with:
+          repository: WireGuard/wireguard-tools
+          ref: v${{ env.TOOLS_VERSION }}
+          path: tools
+      - name: Verify and build tools
         env:
           TARGET: ${{ matrix.target }}
           ARCH: ${{ matrix.arch }}
         run: |
-          apk add gnupg
-          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.xz https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.xz
-          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.asc https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.asc
-          unxz wireguard-tools-$TOOLS_VERSION.tar.xz
-          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-tools-$TOOLS_VERSION.tar.asc wireguard-tools-$TOOLS_VERSION.tar
-          tar -xf wireguard-tools-$TOOLS_VERSION.tar
-          mv wireguard-tools-$TOOLS_VERSION tools
+          gpg --import ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg
+          git -C tools verify-tag v$TOOLS_VERSION
           cd tools/src
           CC="$ARCH-linux-musl-gcc" LDLIBS="-static" make -j$(nproc)
           $ARCH-linux-musl-strip --strip-unneeded wg
@@ -252,18 +254,25 @@ jobs:
         run: |
           curl -o buildroot.tar.bz2 https://buildroot.org/downloads/buildroot-2017.11.1.tar.bz2
           tar -xf buildroot.tar.bz2
-      - name: Download WireGuard module source
+      - uses: actions/checkout@v6
+        with:
+          repository: WireGuard/wireguard-linux-compat
+          ref: v${{ env.MODULE_VERSION }}
+          path: wireguard-linux-compat-${{ env.MODULE_VERSION }}
+      - uses: actions/checkout@v6
+        with:
+          repository: WireGuard/wireguard-tools
+          ref: v${{ env.TOOLS_VERSION }}
+          path: wireguard-tools-${{ env.TOOLS_VERSION }}
+      - name: Verify WireGuard sources
         run: |
-          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.xz https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.xz
-          curl -L -o wireguard-linux-compat-$MODULE_VERSION.tar.asc https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$MODULE_VERSION.tar.asc
-          unxz wireguard-linux-compat-$MODULE_VERSION.tar.xz
-          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-linux-compat-$MODULE_VERSION.tar.asc wireguard-linux-compat-$MODULE_VERSION.tar
-      - name: Download WireGuard tools source
+          gpg --import ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg
+          git -C wireguard-linux-compat-$MODULE_VERSION verify-tag v$MODULE_VERSION
+          git -C wireguard-tools-$TOOLS_VERSION verify-tag v$TOOLS_VERSION
+      - name: Create source tarballs for buildroot
         run: |
-          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.xz https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.xz
-          curl -L -o wireguard-tools-$TOOLS_VERSION.tar.asc https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-$TOOLS_VERSION.tar.asc
-          unxz wireguard-tools-$TOOLS_VERSION.tar.xz
-          gpgv --keyring ci/AB9942E6D4A4CFC3412620A749FC7012A5DE03AE.gpg wireguard-tools-$TOOLS_VERSION.tar.asc wireguard-tools-$TOOLS_VERSION.tar
+          tar -cf wireguard-linux-compat-$MODULE_VERSION.tar wireguard-linux-compat-$MODULE_VERSION/
+          tar -cf wireguard-tools-$TOOLS_VERSION.tar wireguard-tools-$TOOLS_VERSION/
       - name: Copy packages
         run: cp -pr unifios/packages/* buildroot-2017.11.1/package
       - name: Copy WireGuard source
