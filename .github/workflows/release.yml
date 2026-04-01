@@ -56,4 +56,6 @@ jobs:
             --target "${{ steps.find-run.outputs.sha }}" \
             --title "WireGuard ${MODULE_VERSION} ${TOOLS_VERSION}" \
             -F release_notes.md \
+            --draft \
+            --prerelease \
             artifacts/*
