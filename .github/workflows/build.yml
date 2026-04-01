@@ -4,8 +4,13 @@ on:
   push:
     branches:
       - "master"
+    tags:
+      - "*.*.*-*"
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 env:
   MODULE_VERSION: "1.0.20220627"
@@ -24,6 +29,7 @@ jobs:
         CROSS: ${{ matrix.toolchain }}
 
     strategy:
+      fail-fast: false
       matrix:
         device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
         version: [1, 2]
@@ -76,8 +82,6 @@ jobs:
 
   module-prepare:
     runs-on: ubuntu-24.04
-    container:
-      image: buildpack-deps:focal
 
     steps:
       - uses: actions/checkout@v6
@@ -106,6 +110,7 @@ jobs:
       image: ghcr.io/fossoreslp/wireguard-vyatta-ubnt/ubnt-build:${{ matrix.image }}
 
     strategy:
+      fail-fast: false
       matrix:
         device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
         version: [1, 2]
@@ -157,6 +162,7 @@ jobs:
       image: ${{ matrix.image }}
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: mips
@@ -195,6 +201,7 @@ jobs:
       image: debian
 
     strategy:
+      fail-fast: false
       matrix:
         device: [e100, e200, e300, e1000, ugw3, ugw4, ugwxg]
         version: [1, 2]
@@ -247,17 +254,26 @@ jobs:
           path: ${{ matrix.device }}-v${{ matrix.version }}-v${{ env.MODULE_VERSION }}-v${{ env.TOOLS_VERSION }}.deb
 
   release:
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     needs:
       - package
 
     steps:
       - uses: actions/checkout@v6
-      - name: Create Release
-        id: create_release
-        uses: fossoreslp/release-artifacts@v1
+      - uses: actions/download-artifact@v4
         with:
-          title: WireGuard ${{ env.MODULE_VERSION }} ${{ env.TOOLS_VERSION }}
-          template: ci/release_body.md
-          token: ${{ secrets.GITHUB_TOKEN }}
-          variables: ${{ toJSON(env) }}
+          pattern: release_*
+          path: artifacts
+          merge-multiple: true
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          envsubst < ci/release_body.md > release_notes.md
+          gh release create "${{ github.ref_name }}" \
+            --title "WireGuard ${MODULE_VERSION} ${TOOLS_VERSION}" \
+            -F release_notes.md \
+            artifacts/*

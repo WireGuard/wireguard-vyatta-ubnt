@@ -6,15 +6,15 @@ Versions
 ---------
 | Name         | Version            |
 | ------------ | ------------------ |
-| Module       | {{MODULE_VERSION}} |
-| Tools        | {{TOOLS_VERSION}}  |
-| EdgeOS v1    | {{FIRMWARE_ER_v1}} |
-| EdgeOS v2    | {{FIRMWARE_ER_v2}} |
-| USG firmware | {{FIRMWARE_UGW}}   |
+| Module       | ${MODULE_VERSION}  |
+| Tools        | ${TOOLS_VERSION}   |
+| EdgeOS v1    | ${FIRMWARE_ER_v1}  |
+| EdgeOS v2    | ${FIRMWARE_ER_v2}  |
+| USG firmware | ${FIRMWARE_UGW}    |
 
 See below for binaries.
 
-**IMPORTANT:** EdgeOS devices have different packages, one for EdgeOS {{FIRMWARE_ER_v1}} (marked v1) and one for EdgeOS {{FIRMWARE_ER_v2}}. Make sure to download the right one. The installer will produce an error if you use the wrong version.
+**IMPORTANT:** EdgeOS devices have different packages, one for EdgeOS ${FIRMWARE_ER_v1} (marked v1) and one for EdgeOS ${FIRMWARE_ER_v2}. Make sure to download the right one. The installer will produce an error if you use the wrong version.
 
 Device names
 ---------------
