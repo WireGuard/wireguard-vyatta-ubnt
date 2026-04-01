@@ -37,7 +37,7 @@ make install
 
 # GCC - stage 1
 cd $BUILD_ROOT/gcc
-$SRC_ROOT/gcc-$GCC_VER/configure --prefix=/opt/cross --target=$TARGET --disable-fixed-point --disable-multilib --disable-sim --enable-languages=c --with-abi=32 --with-float=soft --with-mips-plt
+CXXFLAGS="-std=gnu++14" $SRC_ROOT/gcc-$GCC_VER/configure --prefix=/opt/cross --target=$TARGET --disable-fixed-point --disable-multilib --disable-sim --enable-languages=c --with-abi=32 --with-float=soft --with-mips-plt
 make -j$(nproc) all-gcc
 make install-gcc
 
